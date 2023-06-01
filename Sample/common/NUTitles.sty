@@ -1,0 +1,207 @@
+\ProvidesPackage{NUTitles}[2023/05/30 Custom title page for Newcastle University Outreach activities]
+\RequirePackage{graphicx}
+\RequirePackage{tikz}
+\RequirePackage{xcolor}
+\usetikzlibrary{calc}
+% Parameters. We also have \title by default
+\renewcommand*{\description}[1]{\gdef\@description{#1}}
+\newcommand*{\@description}{Use \texttt{\textbackslash{}description} to set the description of the activity.}
+
+\newcommand*{\stage}[1]{\gdef\@stage{#1}}
+\newcommand*{\@stage}{\@nil}
+
+\newcommand*{\duration}[2][\@nil]{\gdef\@duration{#2}\gdef\@durationextended{#1}}
+\newcommand*{\@duration}{\@nil}
+\newcommand*{\@durationextended}{\@nil}
+
+% We probably want to handle these differently, and probably not actually on the title page at all
+%\newcommand*{\curriculum}[1]{\gdef\@curriculum{#1}}
+%\newcommand*{\@curriculum}{Use \texttt{\textbackslash{}curriculum} to set the curriculum links of the activity}
+
+\newcommand*{\workswith}[1]{\gdef\@workswith{#1}}
+\newcommand*{\@workswith}{\@nil}
+
+\newcommand*{\oncampusonly}{\gdef\@oncampusonly{}}
+\newcommand*{\@oncampusonly}{\@nil}
+
+% #region Duration
+\newcommand{\showDuration}[2][\@nil]{%
+\begin{tikzpicture}[
+    lines/.style = {
+        draw = ForegroundColour,
+        line width = 0.5mm
+    },
+    duration/.style = {
+        % draw = ForegroundColour,
+        thin,
+        fill = Accent1_3
+    },
+    extended duration/.style = {
+        % draw = ForegroundColour,
+        thin,
+        fill = Accent2_5,
+    },
+    hand/.style = {
+        line width = 0.5mm,
+        line cap = round,
+        draw = Accent1,
+    },
+    center/.style = {
+        fill = Accent1
+    },
+    extended hand/.style = {
+        line width = 0.5mm,
+        line cap = round,
+        draw = Accent2_3,
+    },
+    extended center/.style = {
+        fill = Accent2_3
+    },
+    hand background/.style = {
+        line width = 1.5mm,
+        line cap = round,
+        draw = white,
+    },
+	label style/.style = {
+		Accent1,
+		fill = white,
+		fill opacity = 0.5,
+		text opacity = 1,
+		inner sep = 0.5mm
+	}
+]
+\pgfmathsetmacro{\radius}{1}
+\pgfmathsetmacro{\innerradius}{0.85*\radius}
+\pgfmathsetmacro{\handlength}{0.95*\innerradius}
+\pgfmathsetmacro{\innerradiusextended}{0.85*\innerradius}
+\pgfmathsetmacro{\handlengthextended}{0.95*\innerradiusextended}
+
+% if we have an extended time:
+\def\tmp{#1}
+\ifx\tmp\@nnil % note the extra n!
+%
+\else
+	% Extended duration
+	\pgfmathsetmacro{\de}{#1} % in minutes
+	\pgfmathsetmacro{\deangle}{90 - \de*360/60}
+	\path[extended duration] (0,0) -- (90:\innerradiusextended) arc (90:\deangle:\innerradiusextended) -- cycle;
+\fi
+
+% Normal duration
+\pgfmathsetmacro{\d}{#2} % in minutes
+\pgfmathsetmacro{\dangle}{90 - \d*360/60}
+\path[duration] (0,0) -- (90:\innerradius) arc (90:\dangle:\innerradius) -- cycle;
+
+% Hands
+%% Background
+\ifx\tmp\@nnil
+	\path[fill = white] (0,0) circle (0.15cm); % smaller circle if we have no extended duration
+\else
+	\path[fill = white] (0,0) circle (0.2cm); % bigger circle if we have extended duration
+\fi
+\path[hand background] (0,0) -- (\dangle:\radius);
+\ifx\tmp\@nnil
+\else
+	\path[hand background] (0,0) -- (\deangle:\radius);
+\fi
+
+% Extended duration
+\ifx\tmp\@nnil
+\else
+	\path[extended hand] (0,0) -- (\deangle:\handlengthextended);
+	\path[extended center] (0,0) circle (0.15cm);
+\fi
+
+% Normal duration
+\path[hand] (0,0) -- (\dangle:\handlength);
+\path[center] (0,0) circle (0.1cm);
+
+% Clockface
+\draw[lines] (0,0) circle (\radius);
+\draw[lines, fill = white, draw = white] (0,0) circle (0.025);
+\foreach \t in {1,...,12} {
+    \draw[lines] (\t*30:0.9*\radius) -- (\t*30:1*\radius);
+}
+
+\draw[lines] (95:\radius) -- ++ (0, 0.2) (85:\radius) -- ++ (0, 0.2);
+\draw[lines, rounded corners = 0.05cm, fill = Accent1_5] (90:\radius + 0.2) ++ (-0.2, 0) rectangle ++ (0.4, 0.2);
+\foreach \t in {-40, 40} {
+	\begin{scope}[rotate = \t]
+		\draw[lines] (95:\radius) -- ++ (0, 0.15) (85:\radius) -- ++ (0, 0.15);
+		\draw[lines, rounded corners = 0.05cm, fill = Accent1_5] (90:\radius + 0.15) ++ (-0.15, 0) rectangle ++ (0.3, 0.15);
+	\end{scope}
+}
+
+% Labels
+\ifx\tmp\@nnil
+\else
+\node[anchor=\deangle-180, label style, align = center] (extended) at (\deangle:\radius + 0.25) {\de\,min};
+\fi
+\node[anchor=\dangle-180, label style] (normal) at (\dangle:\radius + 0.25) {\d\,min};
+\pgfresetboundingbox
+\useasboundingbox (-\radius, -\radius) rectangle (\radius, \radius);
+
+\end{tikzpicture}
+}
+% #endregion
+
+\renewcommand*{\maketitle}{%
+\begin{titlepage}
+\begin{tikzpicture}[overlay, remember picture]
+	
+	\node[below right = 1cm, align = left] at ($(current page.north west) + (1,-1)$) {%
+		\ifx\@duration\@nnil%
+			Use \texttt{\textbackslash{}duration} to set the duration \\
+			of the activity (in minutes). For example:\\
+			\texttt{\textbackslash{}duration[25]\{20\}}\\
+		\else\ifx\@durationextended\@nnil%
+			\showDuration{\@duration}
+		\else
+			\showDuration[\@durationextended]{\@duration}
+		\fi\fi
+	};
+	\node[below left = 1cm, align = right] at ($(current page.north east) + (-1,-1)$) {%
+		\ifx\@stage\@nnil
+			Use \texttt{\textbackslash{}stage} to set the target Key Stage \\
+			of the activity.
+		\else
+			\large Suitable for:\\
+			\Large\color{Accent2}\@stage
+		\fi
+	};
+\end{tikzpicture}
+\begin{center}
+\vspace{3cm}
+{\Huge Newcastle University\par\LARGE School of Maths, Stats, and Physics\par}
+\vspace{0.75cm}
+\includegraphics[width = 4cm]{common/ncl_crest.pdf}\par
+\vspace{0.75cm}
+{\Huge\bfseries\@title\par}
+\vspace{0.75cm}
+\ifx\@workswith\@nnil
+%
+\else
+	{This activity works well alongside:\par
+	\large\color{Accent1}\@workswith\par}
+\fi
+\vspace{0.75cm}
+% \hrule
+{\@description\par}
+% \hrule
+%
+\vfill
+%
+\ifx\@oncampusonly\@nnil
+%
+\else
+	{\huge\color{Accent2}This activity should only be run on campus.\par}
+\fi
+\vspace{1cm}
+\end{center}
+\end{titlepage}
+}
+
+% \renewcommand{\makefrontmatter}{}
+
+
+\endinput
