@@ -2,7 +2,36 @@
 \RequirePackage{graphicx}
 \RequirePackage{tikz}
 \RequirePackage{xcolor}
+\RequirePackage{mdframed}
 \usetikzlibrary{calc}
+
+% meta file
+% open and read first, before it gets overwritten by opening for writing
+
+\newread\@metadatafileread
+\immediate\openin\@metadatafileread=\jobname.meta
+\read\@metadatafileread to\filecontents
+
+
+\AtBeginDocument{
+\newwrite\@metadatafile
+\immediate\openout\@metadatafile=\jobname.meta
+\write\@metadatafile{BOF}
+}
+
+\newcommand\safety[1]{%
+% Firstly, write the contents to the meta file
+\typeout{Writing to meta file: #1}
+\write\@metadatafile{#1}%
+% write %$EOI to the meta file, to indicate the end of the information
+\typeout{Writing to meta file: \%\$EOI}
+\write\@metadatafile{EOI}%
+% Now, we want to display the information as normal. This will eventually be a custom tcolorbox (or similar), but for now just an mdframed box
+\begin{mdframed}
+#1
+\end{mdframed}
+}
+
 % Parameters. We also have \title by default
 \renewcommand*{\description}[1]{\gdef\@description{#1}}
 \newcommand*{\@description}{Use \texttt{\textbackslash{}description} to set the description of the activity.}
@@ -143,8 +172,9 @@
 
 \end{tikzpicture}
 }
-% #endregion
+% #endregion Duration
 
+% #region Titlepage
 \renewcommand*{\maketitle}{%
 \begin{titlepage}
 \begin{tikzpicture}[overlay, remember picture]
@@ -201,7 +231,30 @@
 \end{titlepage}
 }
 
-% \renewcommand{\makefrontmatter}{}
+% #endregion Titlepage
 
+% #region Frontmatter
+\newcommand{\makefrontmatter}{%
+\begin{titlepage}
+	This is the frontmatter
+	\begin{mdframed}
+		\ifeof\@metadatafileread
+			File is empty
+		\else
+			File is not empty
+			\filecontents
+			\typeout{-----------------------------------------------------}
+			\typeout{from file: \filecontents}
+			\typeout{-----------------------------------------------------}
+		\fi
+	\end{mdframed}
+	\closein\@metadatafileread
+\end{titlepage}
+}
+
+% #endregion Frontmatter
+
+% close the meta file
+\AtEndDocument{\closeout\@metadatafile}
 
 \endinput

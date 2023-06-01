@@ -142,16 +142,18 @@
 ## Activity Packs
 
 - Should have:
-    - Frontmatter:
+    - Title page:
         - Name
         - Description
         - Age range
         - Time required
-        - Relevant curriculum links for each exam board
         - "Works well with" other activities
-        - Equipment required
-        - Safety considerations
+        - For on campus only
+    - Frontmatter:
+        - Relevant curriculum links for each exam board
         - Pre-requisites
+        - Safety considerations
+        - Equipment required (table, laminate with number out and number in columns for dry-wipe pens, etc.)
     - Instructions
         - Instructions for the activity leader
             - Safety considerations at the relevant points (repeated from frontmatter)
