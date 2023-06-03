@@ -3,35 +3,42 @@
 \RequirePackage{tikz}
 \RequirePackage{xcolor}
 \RequirePackage{mdframed}
-\usetikzlibrary{calc}
+\RequirePackage[most]{tcolorbox}
+\usetikzlibrary{calc, shapes}
 
-% meta file
-% open and read first, before it gets overwritten by opening for writing
+% #region File IO
+\def\eolmarker{\par}
+\newread\@inputcheckfile
+\newcommand{\checkfile}[1]{%
+  % Initialize the status to 2 (file does not exist)
+  \def\filestatus{2}%
+  % Open the file for reading
+  \immediate\openin\@inputcheckfile=#1
+  % Check if the file is open
+  \ifeof\@inputcheckfile
+    % File does not exist
+    \def\filestatus{2}%
+  \else
+    % File exists, check if it is empty
+    \immediate\read\@inputcheckfile to\@fileline
+    \ifx\@fileline\eolmarker
+      % File is empty
+      \def\filestatus{1}%
+    \else
+      % File has content
+      \def\filestatus{0}%
+    \fi
+  \fi
+  % Close the file
+  \immediate\closein\@inputcheckfile
+}
 
-\newread\@metadatafileread
-\immediate\openin\@metadatafileread=\jobname.meta
-\read\@metadatafileread to\filecontents
 
-
-\AtBeginDocument{
 \newwrite\@metadatafile
-\immediate\openout\@metadatafile=\jobname.meta
-\write\@metadatafile{BOF}
-}
 
-\newcommand\safety[1]{%
-% Firstly, write the contents to the meta file
-\typeout{Writing to meta file: #1}
-\write\@metadatafile{#1}%
-% write %$EOI to the meta file, to indicate the end of the information
-\typeout{Writing to meta file: \%\$EOI}
-\write\@metadatafile{EOI}%
-% Now, we want to display the information as normal. This will eventually be a custom tcolorbox (or similar), but for now just an mdframed box
-\begin{mdframed}
-#1
-\end{mdframed}
-}
+% #endregion File IO
 
+% #region Parameters
 % Parameters. We also have \title by default
 \renewcommand*{\description}[1]{\gdef\@description{#1}}
 \newcommand*{\@description}{Use \texttt{\textbackslash{}description} to set the description of the activity.}
@@ -52,6 +59,7 @@
 
 \newcommand*{\oncampusonly}{\gdef\@oncampusonly{}}
 \newcommand*{\@oncampusonly}{\@nil}
+% #endregion Parameters
 
 % #region Duration
 \newcommand{\showDuration}[2][\@nil]{%
@@ -235,26 +243,93 @@
 
 % #region Frontmatter
 \newcommand{\makefrontmatter}{%
-\begin{titlepage}
-	This is the frontmatter
-	\begin{mdframed}
-		\ifeof\@metadatafileread
-			File is empty
-		\else
-			File is not empty
-			\filecontents
-			\typeout{-----------------------------------------------------}
-			\typeout{from file: \filecontents}
-			\typeout{-----------------------------------------------------}
+	\checkfile{\jobname.meta}
+	\begin{titlepage}
+		This is the frontmatter
+		\ifnum\filestatus=0 %only do this if the file exists *and* has content
+			\begin{warningbox}[top = 1em]
+				\begin{itemize}
+					\input{\jobname.meta}
+				\end{itemize}
+			\end{warningbox}
 		\fi
-	\end{mdframed}
-	\closein\@metadatafileread
-\end{titlepage}
+	\end{titlepage}
 }
 
 % #endregion Frontmatter
 
+% #region Safety
+\newcommand{\cautionSymbol}{%
+\begin{tikzpicture}%
+    \node[%
+        ForegroundColour, 
+        regular polygon,
+        regular polygon sides = 3, 
+        fill = Warning, 
+        draw = Warning, 
+        double = ForegroundColour, 
+        line width = 0.5mm, 
+        double distance = 0.5mm, 
+        rounded corners, 
+        inner sep = 0pt,
+    ] {\bfseries\large!};%
+\end{tikzpicture}%
+}
+
+\newtcolorbox{warningbox}[1][]{%
+    enhanced,
+    colback = Warning_5,
+    colframe= Warning_3,
+	colupper = ForegroundColour,
+    title   = {\cautionSymbol\hfill\large\raisebox{0.5em}{\bfseries \Large Caution!}\hfill\cautionSymbol}, % Yes there's much better ways to do this, but I'm lazy
+	% We could potentially be better having a single file we refer to for performance, but I doubt any of these will be long enough for this to be worth it.
+    coltitle = ForegroundColour,
+    before upper = {\setlength\parskip{1.5em}\setlength\parindent{17pt}}, % set the normal indent and paragraph skip
+    breakable,
+    lines before break = 4,
+    % Border when the box is split across multiple pages
+    overlay first = {
+        \path[fill = Warning] ($(interior.south east) + (-0.5cm, 0.5cm)$) -- ++ (0.35cm, 0) -- ++ ({-cos(60) * 0.35cm}, {-sin(60) * 0.35cm}) node[left, scale = 0.75, Warning] {\textit{continued.}} -- cycle;
+        \draw[dashed, Warning_3, very thick] ($(interior.south east) + (0, -0.25mm)$) -- ($(interior.south west) + (0, -0.25mm)$);
+    },
+    overlay middle = {
+        \path[fill = Warning] ($(interior.south east) + (-0.5cm, 0.5cm)$) -- ++ (0.35cm, 0) -- ++ ({-cos(60) * 0.35cm}, {-sin(60) * 0.35cm}) node[left, scale = 0.75, Warning] {\textit{continued.}} -- cycle;
+        \draw[dashed, Warning_3, very thick] ($(interior.south east) + (0, -0.25mm)$) -- ($(interior.south west) + (0, -0.25mm)$);
+        \draw[dashed, Warning_3, very thick] ($(interior.north east) + (0, 0.25mm)$) -- ($(interior.north west) + (0, 0.25mm)$);
+    },
+    overlay last = {
+        \draw[dashed, Warning_3, very thick] ($(interior.north east) + (0, 0.25mm)$) -- ($(interior.north west) + (0, 0.25mm)$);
+    },
+    topsep at break = 1.5em,
+    bottomsep at break = 1em,
+    top = -0.5em, % parskip is 1.5em, so this is 1em, i.e. the normal spacing before the first paragraph
+    #1
+}
+% #endregion Safety
+
+\AtBeginDocument{
+\maketitle
+\makefrontmatter	
+\openout\@metadatafile=\jobname.meta
+}
+
+
+\newcommand\safety[2][\@nil]{
+	\def\tmp{#1}
+	\ifx\tmp\@nnil%
+		\write\@metadatafile{\noexpand\item[\bfseries pg. \thepage] #2}
+	\else
+		\write\@metadatafile{\noexpand\item[\bfseries pg. \thepage] #1}
+	\fi
+	% \write\@metadatafile{\noexpand\item[\bfseries p.\thepage] \towriteout}
+	\begin{warningbox}
+		#2
+	\end{warningbox}
+}
+
 % close the meta file
 \AtEndDocument{\closeout\@metadatafile}
+
+
 
 \endinput

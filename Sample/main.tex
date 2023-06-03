@@ -11,16 +11,20 @@
 \oncampusonly{}
 \begin{document}
 
-\maketitle
-
-\makefrontmatter
-
 \section{Introduction}
 
-\safety{This is a test of the safety command again.}
+\safety[This is an alternative description for the summary]{This is a test of the safety command.}
 \section{Introduction}
 
-\safety{This is a test of the safety command again.}
+\lipsum[1-6]
+
+\safety{This is a test of the safety command again.
+
+This one has multiple lines.}
+
+\lipsum[1-6]
+
+\safety{This one has a macro: \textbf{Test}. $\alpha$}
 
 
 \end{document}
