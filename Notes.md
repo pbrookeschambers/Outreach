@@ -139,6 +139,11 @@
     - Stretch the membrane down to create a gravity well
     - Could be used to demonstrate orbits, escape velocity, etc.
 
+- Electroplating organic material?
+    - Use the silver mirror reaction to coat anything in silver
+    - Now use that as a conductive surface for electroplating
+    - Could give this a physics spin, but realistically this is chemistry
+
 ## Activity Packs
 
 - Should have:
@@ -169,3 +174,36 @@
             - Possible hints for the students if they get stuck
         - Digital versions as well?
     - Risk Assessment
+
+
+## LaTeX
+
+ - 4 packages:
+    - NUOutreach
+        - Contains commands and info common to all the documents to be produced
+    - NUCover
+        - Handles creating and formatting the cover page and the frontmatter
+            - Title
+            - Description 
+            - Duration
+            - Age range
+            - Curriculum links
+            - Prerequisites
+            - Equipment required
+                - With a checklist
+            - Safety considerations
+                - This can still be taken from the instructions, it'll just need a tiny bit of re-working
+    - NUInstructions
+        - Handles creating the instructions for the activity leader and the students as two separate files
+        - Use a flag set in an aux file to determine which to compile
+            - This way we can easily use a makefile or similar to compile both at once
+    - NUWorksheet
+        - Handles creating the worksheets and handouts for the students, and a version with sample answers for the activity leader
+        - Again, use a flag set in an aux file to determine which to compile
+
+### File Structure
+
+- Each activity should have its own directory, with three files inside:
+    - `cover.tex`
+    - `instructions.tex`
+    - `worksheet.tex`

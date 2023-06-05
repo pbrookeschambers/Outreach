@@ -182,6 +182,8 @@
 }
 % #endregion Duration
 
+\edef\@crestfile{\CurrentFilePath/ncl_crest.pdf}
+
 % #region Titlepage
 \renewcommand*{\maketitle}{%
 \begin{titlepage}
@@ -212,7 +214,7 @@
 \vspace{3cm}
 {\Huge Newcastle University\par\LARGE School of Maths, Stats, and Physics\par}
 \vspace{0.75cm}
-\includegraphics[width = 4cm]{common/ncl_crest.pdf}\par
+\includegraphics[width = 4cm]{\@crestfile}\par
 \vspace{0.75cm}
 {\Huge\bfseries\@title\par}
 \vspace{0.75cm}
@@ -306,6 +308,9 @@
     #1
 }
 % #endregion Safety
+
+\typeout{path: \CurrentFilePath}
+\typeout{file: \CurrentFile}
 
 \AtBeginDocument{
 \maketitle

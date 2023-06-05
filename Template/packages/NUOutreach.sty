@@ -1,0 +1,155 @@
+\ProvidesPackage{NUOutreach}[2023/06/04 Custom package for Newcastle University outreach activities]
+\RequirePackage[table]{xcolor}
+\RequirePackage[most]{tcolorbox}
+\RequirePackage{tikz}
+\usetikzlibrary{calc, shapes, tikzmark}
+\RequirePackage{ifdraft} % if we're in draft mode, we might want to give the user hints for missing information.
+\RequirePackage{titlesec}
+
+% #region page setup
+
+\RequirePackage[margin = 0.7in]{geometry}
+\RequirePackage[T1]{fontenc}
+
+% IDK which font to use. Some options:
+% \RequirePackage[sfdefault]{AlegreyaSans}
+% \renewcommand*\oldstylenums[1]{{\firaoldstyle #1}}
+
+\RequirePackage[sfdefault, light]{FiraSans}
+\renewcommand*\oldstylenums[1]{{\firaoldstyle #1}}
+
+% \RequirePackage{sansmathfonts}
+% \renewcommand*\familydefault{\sfdefault}
+
+\newcommand\smskip{\vspace{0.75cm}}
+\newcommand\bgskip{\vspace{3cm}}
+
+% titlesec is misbehaving. TODO: come back to this.
+
+% #endregion page setup
+
+
+\edef\packagepath{\CurrentFilePath}
+
+\input{\packagepath/themes/ncl.tex}
+
+
+
+% #region File IO
+\def\eolmarker{\par}
+\newread\@inputcheckfile
+\newcommand{\checkfile}[1]{%
+  % Initialize the status to 2 (file does not exist)
+  \def\filestatus{2}%
+  % Open the file for reading
+  \immediate\openin\@inputcheckfile=#1
+  % Check if the file is open
+  \ifeof\@inputcheckfile
+    % File does not exist
+    \def\filestatus{2}%
+  \else
+    % File exists, check if it is empty
+    \immediate\read\@inputcheckfile to\@fileline
+    \ifx\@fileline\eolmarker
+      % File is empty
+      \def\filestatus{1}%
+    \else
+      % File has content
+      \def\filestatus{0}%
+    \fi
+  \fi
+  % Close the file
+  \immediate\closein\@inputcheckfile
+}
+% #endregion File IO
+
+\newcommand\ifgiven[4][\@nil]{
+    % ifgiven{test macro}{if given}{if not given}
+    %    OR
+    % ifgiven[if not given, draft]{test macro}{if given}{if not given, not draft} 
+    %
+    % Optional argument is for if special behaviour is required for draft mode.
+    %
+    \def\tmp{#1}%
+    \ifx\tmp\@nnil%
+        \ifgiven@nodraft{#2}{#3}{#4}%
+    \else%
+        \ifgiven@draft{#2}{#3}{#4}{#1}%
+    \fi%
+}
+
+\newcommand\ifgiven@nodraft[3]{
+    % ifgiven@nodraft{test macro}{if given}{if not given}
+    \expandafter\def\expandafter\tmp\expandafter{#1}%
+    \ifx\tmp\@nnil%
+    #3%
+    \else%
+    #2%
+    \fi%
+}
+
+\newcommand\ifgiven@draft[4]{
+    % ifgiven@draft{test macro}{if given}{if not given, not draft}{if not given, draft}
+    \expandafter\def\expandafter\tmp\expandafter{#1}%
+    \ifx\tmp\@nnil%
+    \ifdraft{#4}{#3}%
+    \else%
+    #2%
+    \fi%
+}
+
+% #region Boxes
+
+% #region Warning box
+
+\newcommand{\cautionSymbol}{%
+\begin{tikzpicture}%
+    \node[%
+        ForegroundColour, 
+        regular polygon,
+        regular polygon sides = 3, 
+        fill = Warning, 
+        draw = Warning, 
+        double = ForegroundColour, 
+        line width = 0.5mm, 
+        double distance = 0.5mm, 
+        rounded corners, 
+        inner sep = 0pt,
+    ] {\bfseries\large!};%
+\end{tikzpicture}%
+}
+
+\newtcolorbox{warningbox}[1][]{%
+    enhanced,
+    colback = Warning_5,
+    colframe= Warning_3,
+	colupper = ForegroundColour,
+    title   = {\cautionSymbol\hfill\large\raisebox{0.5em}{\bfseries \Large Caution!}\hfill\cautionSymbol}, % Yes there's much better ways to do this, but I'm lazy
+	% We could potentially be better having a single file we refer to for performance, but I doubt any of these will be long enough for this to be worth it.
+    coltitle = ForegroundColour,
+    before upper = {\setlength\parskip{1.5em}\setlength\parindent{17pt}}, % set the normal indent and paragraph skip
+    breakable,
+    lines before break = 4,
+    % Border when the box is split across multiple pages
+    overlay first = {
+        \path[fill = Warning] ($(interior.south east) + (-0.5cm, 0.5cm)$) -- ++ (0.35cm, 0) -- ++ ({-cos(60) * 0.35cm}, {-sin(60) * 0.35cm}) node[left, scale = 0.75, Warning] {\textit{continued.}} -- cycle;
+        \draw[dashed, Warning_3, very thick] ($(interior.south east) + (0, -0.25mm)$) -- ($(interior.south west) + (0, -0.25mm)$);
+    },
+    overlay middle = {
+        \path[fill = Warning] ($(interior.south east) + (-0.5cm, 0.5cm)$) -- ++ (0.35cm, 0) -- ++ ({-cos(60) * 0.35cm}, {-sin(60) * 0.35cm}) node[left, scale = 0.75, Warning] {\textit{continued.}} -- cycle;
+        \draw[dashed, Warning_3, very thick] ($(interior.south east) + (0, -0.25mm)$) -- ($(interior.south west) + (0, -0.25mm)$);
+        \draw[dashed, Warning_3, very thick] ($(interior.north east) + (0, 0.25mm)$) -- ($(interior.north west) + (0, 0.25mm)$);
+    },
+    overlay last = {
+        \draw[dashed, Warning_3, very thick] ($(interior.north east) + (0, 0.25mm)$) -- ($(interior.north west) + (0, 0.25mm)$);
+    },
+    topsep at break = 1.5em,
+    bottomsep at break = 1em,
+    top = -0.5em, % parskip is 1.5em, so this is 1em, i.e. the normal spacing before the first paragraph
+    #1
+}
+
+% #endregion Warning box
+
+
+% #endregion Boxes

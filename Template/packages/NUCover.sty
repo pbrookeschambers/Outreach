@@ -1,0 +1,288 @@
+\ProvidesPackage{NUCover}[2023/06/04 Custom package for Newcastle University outreach cover pages]
+\edef\packagepath{\CurrentFilePath}
+\RequirePackage{\packagepath/NUOutreach}
+
+\RequirePackage{mdframed}
+
+\RequirePackage{graphicx}
+\RequirePackage{tabularx}
+
+
+% #region File IO Setup
+
+\def\meta@filename{safety.log}
+\def\meta@equipmentfilename{equipment.log}
+
+\newread\meta@file
+\newwrite\meta@equipmentfile
+\immediate\openout\meta@equipmentfile=\meta@equipmentfilename
+
+% #endregion File IO Setup
+
+% #region Parameters
+
+% Parameters for generating the cover and the frontmatter. We also have \title by default
+
+\renewcommand*{\description}[1]{\gdef\@description{#1}} % I hope this isn't overwriting anything important
+\newcommand*{\@description}{\@nil}
+% This way we can check if it's been set, and especially distinguish between it
+% being set to nothing and not being set at all
+
+\newcommand*{\stage}[1]{\gdef\@stage{#1}}
+\newcommand*{\@stage}{\@nil}
+
+\newcommand*{\duration}[2][\@nil]{\gdef\@duration{#2}\gdef\@durationextended{#1}}
+\newcommand*{\@duration}{\@nil}
+\newcommand*{\@durationextended}{\@nil}
+
+\newcommand*{\workswith}[1]{\gdef\@workswith{#1}}
+\newcommand*{\@workswith}{\@nil}
+
+\newcommand*{\oncampusonly}{\gdef\@oncampusonly{}}
+\newcommand*{\@oncampusonly}{\@nil}
+
+% #endregion Parameters
+
+% #region Duration
+\newcommand{\showDuration}[2][\@nil]{%
+\begin{tikzpicture}[
+    lines/.style = {
+        draw = ForegroundColour,
+        line width = 0.5mm
+    },
+    duration/.style = {
+        % draw = ForegroundColour,
+        thin,
+        fill = Blue_3
+    },
+    extended duration/.style = {
+        % draw = ForegroundColour,
+        thin,
+        fill = Red_5,
+    },
+    hand/.style = {
+        line width = 0.5mm,
+        line cap = round,
+        draw = Blue,
+    },
+    center/.style = {
+        fill = Blue
+    },
+    extended hand/.style = {
+        line width = 0.5mm,
+        line cap = round,
+        draw = Red_3,
+    },
+    extended center/.style = {
+        fill = Red_3
+    },
+    hand background/.style = {
+        line width = 1.5mm,
+        line cap = round,
+        draw = white,
+    },
+	label style/.style = {
+		Blue,
+		fill = white,
+		fill opacity = 0.5,
+		text opacity = 1,
+		inner sep = 0.5mm
+	}
+]
+\pgfmathsetmacro{\radius}{1}
+\pgfmathsetmacro{\innerradius}{0.85*\radius}
+\pgfmathsetmacro{\handlength}{0.95*\innerradius}
+\pgfmathsetmacro{\innerradiusextended}{0.85*\innerradius}
+\pgfmathsetmacro{\handlengthextended}{0.95*\innerradiusextended}
+
+% if we have an extended time:
+\def\tmp{#1}
+\ifx\tmp\@nnil % note the extra n!
+%
+\else
+	% Extended duration
+	\pgfmathsetmacro{\de}{#1} % in minutes
+	\pgfmathsetmacro{\deangle}{90 - \de*360/60}
+	\path[extended duration] (0,0) -- (90:\innerradiusextended) arc (90:\deangle:\innerradiusextended) -- cycle;
+\fi
+
+% Normal duration
+\pgfmathsetmacro{\d}{#2} % in minutes
+\pgfmathsetmacro{\dangle}{90 - \d*360/60}
+\path[duration] (0,0) -- (90:\innerradius) arc (90:\dangle:\innerradius) -- cycle;
+
+% Hands
+%% Background
+\ifx\tmp\@nnil
+	\path[fill = white] (0,0) circle (0.15cm); % smaller circle if we have no extended duration
+\else
+	\path[fill = white] (0,0) circle (0.2cm); % bigger circle if we have extended duration
+\fi
+\path[hand background] (0,0) -- (\dangle:\radius);
+\ifx\tmp\@nnil
+\else
+	\path[hand background] (0,0) -- (\deangle:\radius);
+\fi
+
+% Extended duration
+\ifx\tmp\@nnil
+\else
+	\path[extended hand] (0,0) -- (\deangle:\handlengthextended);
+	\path[extended center] (0,0) circle (0.15cm);
+\fi
+
+% Normal duration
+\path[hand] (0,0) -- (\dangle:\handlength);
+\path[center] (0,0) circle (0.1cm);
+
+% Clockface
+\draw[lines] (0,0) circle (\radius);
+\draw[lines, fill = white, draw = white] (0,0) circle (0.025);
+\foreach \t in {1,...,12} {
+    \draw[lines] (\t*30:0.9*\radius) -- (\t*30:1*\radius);
+}
+
+\draw[lines] (95:\radius) -- ++ (0, 0.2) (85:\radius) -- ++ (0, 0.2);
+\draw[lines, rounded corners = 0.05cm, fill = Blue_5] (90:\radius + 0.2) ++ (-0.2, 0) rectangle ++ (0.4, 0.2);
+\foreach \t in {-40, 40} {
+	\begin{scope}[rotate = \t]
+		\draw[lines] (95:\radius) -- ++ (0, 0.15) (85:\radius) -- ++ (0, 0.15);
+		\draw[lines, rounded corners = 0.05cm, fill = Blue_5] (90:\radius + 0.15) ++ (-0.15, 0) rectangle ++ (0.3, 0.15);
+	\end{scope}
+}
+
+% Labels
+\ifx\tmp\@nnil
+\else
+\node[anchor=\deangle-180, label style, align = center] (extended) at (\deangle:\radius + 0.25) {\de\,min};
+\fi
+\node[anchor=\dangle-180, label style] (normal) at (\dangle:\radius + 0.25) {\d\,min};
+\pgfresetboundingbox
+\useasboundingbox (-\radius, -\radius) rectangle (\radius, \radius);
+
+\end{tikzpicture}
+}
+% #endregion Duration
+
+% #region Titlepage
+
+\renewcommand*{\maketitle}{%
+\begin{titlepage}
+    % Add duration and stage, relative to the page margins
+\begin{tikzpicture}[overlay, remember picture]
+    \node[below right = 1cm, align = left, text width = 0.4\linewidth] at ($(current page.north west) + (1, -1)$) {
+        \ifgiven[%
+        Use \texttt{\textbackslash{}duration} to set the duration of the activity (in minutes). For example: \texttt{\textbackslash{}duration[25]\{20\}}
+        ]{%
+            \@duration%
+        }{%
+            \ifgiven{\@durationextended}{%
+                \showDuration[\@durationextended]{\@duration}%
+            }{%
+                \showDuration{\@duration}%
+            }%
+        }{}
+    };
+    \node[below left = 1cm, align = right, text width = 0.4\linewidth] at ($(current page.north east) + (-1, -1)$) {
+        \ifgiven[%
+            Use \texttt{\textbackslash{}stage} to set the stage of the activity. For example: \texttt{\textbackslash{}stage\{KS3\}}%
+        ]{%
+            \@stage%
+        }{
+            Suitable for:\\
+            \Large\color{Red}\@stage%
+        }{}
+    };
+\end{tikzpicture}
+\begin{center}
+    \bgskip
+    {\Huge Newcastle University\par\LARGE School of Maths, Stats, and Physics\par}
+    \smskip
+    {\includegraphics[height = 5.5cm]{\packagepath/ncl_crest.pdf}\par}
+    \smskip
+    {\Huge\@title\par}
+    \smskip
+    \ifgiven{\@workswith}{
+        {This activity works well alongside:\par
+        \large\color{Blue}\@workswith\par}
+        \smskip
+    }{}
+    \ifgiven[Use \texttt{\textbackslash{}description} to add a description for the activity.]{\@description}{\@description}{}
+    \vfill
+    \ifgiven{\@oncampusonly}{\Large\color{Red}This activity should only be run on campus}{}
+\end{center}
+\end{titlepage}
+}
+
+% #endregion Titlepage
+
+% #region Frontmatter
+
+% #region Equipment
+
+\newcommand{\equipment}[2][1]{
+    % \equipment[no. per set]{item}
+    \immediate\write\meta@equipmentfile{\noexpand\equipmentEntry{#1}{#2}}
+}
+
+\newcommand{\equipmentEntry}[2]{%
+    \\\hline#2 & #1 & & & & & & & & & &
+}
+
+
+
+% This is temporary until I can get titlesec to behave ========================
+\newcommand\header[1]{%
+    {\vspace{1.25em}\noindent\Large\textcolor{Accent1}{\tikzmarknode{header}{#1}}%
+    \begin{tikzpicture}[overlay, remember picture]
+        \draw[Accent1, thin] let \p1 = (header.south west), \p2 = (current page.center) 
+        in (\x1 + 1em, \y1 - 0.5em) -- (\x2, \y1 - 0.5em);
+    \end{tikzpicture}
+        \par\vspace{1.25em}}
+}
+%==============================================================================
+
+\newcommand{\makefrontmatter}{%
+\immediate\closeout\meta@equipmentfile
+\begin{titlepage}
+    \header{Pre-Requisites}
+
+    This will be a list of pre-requisites for the activity, if there are any.
+
+    \header{Links to Curriculum}
+
+    This will be a list of links to the curriculum, if there are any.
+
+    \header{Safety}
+
+    This will be a summary of the safety information, which is distributed throughout the instructions. This will mean it is important to compile the instructions before this cover.
+\end{titlepage}
+\begin{titlepage}
+\checkfile{\meta@equipmentfilename}
+\ifnum\filestatus=0%
+    % I'm not happy with the implementation *or* appearance of this. I'll come back to it later.
+    \renewcommand\arraystretch{1.75}
+    \def\colwidth{0.75cm}
+    \setlength{\arrayrulewidth}{0.5pt}
+    \begin{tabularx}{0.95\linewidth}{|X r||p{\colwidth}|p{\colwidth}||p{\colwidth}|p{\colwidth}||p{\colwidth}|p{\colwidth}||p{\colwidth}|p{\colwidth}||p{\colwidth}|p{\colwidth}|}
+        \hline
+        \multicolumn{2}{|r||}{\color{Accent1_3}Date $\longrightarrow$} & \multicolumn{2}{c||}{}& \multicolumn{2}{c||}{}& \multicolumn{2}{c||}{}& \multicolumn{2}{c||}{}& \multicolumn{2}{c|}{}\\\hline
+        %\multicolumn{2}{|c||}{Equipment}
+        \bfseries Equipment & \bfseries Per Set & \multicolumn{1}{c|}{\bfseries Out} & \multicolumn{1}{c||}{\bfseries In} & \multicolumn{1}{c|}{\bfseries Out} & \multicolumn{1}{c||}{\bfseries In} & \multicolumn{1}{c|}{\bfseries Out} & \multicolumn{1}{c||}{\bfseries In} & \multicolumn{1}{c|}{\bfseries Out} & \multicolumn{1}{c||}{\bfseries In} & \multicolumn{1}{c|}{\bfseries Out} & \multicolumn{1}{c|}{\bfseries In} 
+        \input{\meta@equipmentfilename}
+        \\\hline
+    \end{tabularx}
+\else%
+    \ifdraft{Use \texttt{\textbackslash{}equipment[quantity]\{item\}} to add equipment to the list.}{}%
+\fi
+\end{titlepage}
+}
+
+% #endregion Equipment
+
+% #endregion Frontmatter
+
+\AtBeginDocument{
+    \maketitle
+    \makefrontmatter
+}
