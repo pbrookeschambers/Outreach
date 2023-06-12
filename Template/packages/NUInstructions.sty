@@ -1,0 +1,98 @@
+\ProvidesPackage{NUInstructions}[2023/06/04 Custom package for Newcastle University outreach activities instructions]
+\edef\packagepath{\CurrentFilePath}
+\RequirePackage{\packagepath/NUOutreach}
+\RequirePackage{\packagepath/NUIW}
+
+% #region Safety
+
+\newwrite\safetyfile
+\immediate\openout\safetyfile=\jobname.safety
+
+
+\newcommand\safety[2][\@nil]{%
+% Write to the meta file so that the cover sheet can read all of these
+    \def\tmp{#1}
+    \ifgiven{\tmp}{
+        % We have a summary. Write this instead
+        \write\safetyfile{\noexpand\item[\bfseries pg. \thepage~] #1}
+    }{
+        \write\safetyfile{\noexpand\item[\bfseries pg. \thepage~] #2}
+    }
+	\begin{warningbox}
+		#2
+	\end{warningbox}
+}
+
+% #endregion Safety
+
+% #region Tasks
+
+\newcounter{taskcounter}
+\setcounter{taskcounter}{0}
+\newcounter{subtaskcounter}[taskcounter]
+\setcounter{subtaskcounter}{0}
+
+\newcommand{\task}[1]{
+    \def\tmp{#1}
+    \stepcounter{taskcounter}
+    \section{
+        Task \thetaskcounter%
+        \ifx\tmp\empty%
+        \else: #1
+        \fi
+    }
+}
+
+\newcommand{\subtask}[1]{
+    \def\tmp{#1}
+    \stepcounter{subtaskcounter}
+    \subsection{
+        Task \thetaskcounter.\alph{subtaskcounter}%
+        \ifx\tmp\empty%
+        \else: #1
+        \fi
+    }
+}
+
+% #endregion Tasks
+
+\def\doctypeline{ Instructions for \ifstudent students\else activity leaders\fi\ifextension, with extension activity\fi}
+
+% #region boxes
+
+\newtcolorbox{taskbox}[1][]{%
+    enhanced,
+    colback = BackgroundColour,
+    colframe= Accent1,
+    colupper = ForegroundColour,
+    title   = {\Large\color{BackgroundColour}\stepcounter{taskcounter}Task \thetaskcounter: #1}, 
+    coltitle = ForegroundColour,
+    before upper = {\setlength\parskip{1.5em}\setlength\parindent{17pt}}, % set the normal indent and paragraph skip
+    breakable,
+    lines before break = 4,
+    % Border when the box is split across multiple pages
+    overlay first = {
+        \path[fill = Accent1] ($(interior.south east) + (-0.5cm, 0.5cm)$) -- ++ (0.35cm, 0) -- ++ ({-cos(60) * 0.35cm}, {-sin(60) * 0.35cm}) node[left, scale = 0.75, Accent1] {\textit{continued.}} -- cycle;
+        \draw[dashed, Accent1, very thick] ($(interior.south east) + (0, -0.25mm)$) -- ($(interior.south west) + (0, -0.25mm)$);
+    },
+    overlay middle = {
+        \path[fill = Accent1] ($(interior.south east) + (-0.5cm, 0.5cm)$) -- ++ (0.35cm, 0) -- ++ ({-cos(60) * 0.35cm}, {-sin(60) * 0.35cm}) node[left, scale = 0.75, Accent1] {\textit{continued.}} -- cycle;
+        \draw[dashed, Accent1, very thick] ($(interior.south east) + (0, -0.25mm)$) -- ($(interior.south west) + (0, -0.25mm)$);
+        \draw[dashed, Accent1, very thick] ($(interior.north east) + (0, 0.25mm)$) -- ($(interior.north west) + (0, 0.25mm)$);
+    },
+    overlay last = {
+        \draw[dashed, Accent1, very thick] ($(interior.north east) + (0, 0.25mm)$) -- ($(interior.north west) + (0, 0.25mm)$);
+    },
+    topsep at break = 1.5em,
+    bottomsep at break = 1em,
+    top = -0.5em, % parskip is 1.5em, so this is 1em, i.e. the normal spacing before the first paragraph
+    after = \par,
+}
+
+% #endregion boxes
+
+% #region Headers and footers
+
+\fancyhead[r]{\scshape\color{ForegroundColour_2}Instructions for \ifstudent students\else activity leaders\fi\ifextension, with extension activity\fi}
+
+% #endregion Headers and footers

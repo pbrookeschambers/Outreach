@@ -1,0 +1,368 @@
+\ProvidesPackage{NUWorksheet}[2023/06/04 Custom package for Newcastle University outreach activities instructions]
+\edef\packagepath{\CurrentFilePath}
+\RequirePackage{\packagepath/NUIW}
+
+\def\doctypeline{Worksheet \ifextension with extension activity\fi\ifinstructor\color{Red}(Answers)\fi}
+
+% #region responses
+
+\newcommand\answertext[2][10em]{
+    \def\tmp{#2}
+    \begin{tcolorbox}[height = #1] 
+        \ifx\tmp\empty%
+        \else%
+            \begin{instructoronly}
+                \textbf{Answer:} #2
+            \end{instructoronly}
+        \fi
+    \end{tcolorbox}
+}
+
+\newcommand\answertextlong[2][15em]{
+    \answertext[#1]{#2}
+}
+
+\newcommand\answerinline[1]{
+    % This can end up nesting tikzpictures if called from inside a tikzpicture. This is not good.
+    \global\studentchangestrue
+    \tikz[baseline = (char.base)]{
+            % got to reset as much of the node styling as is resonable, just in case this is inside another tikzpicture.
+        \node[Blue, minimum width = 0pt, minimum height = 0pt, inner sep = 1pt, scale = 1, opacity = 1] (char) {#1};
+        \ifstudent%
+        % This is the most robust way of doing this I could think of. Things
+        % like \color{white} etc wouldn't work if someone passed something like
+        % a circuitikz symbol or maths. Could use a savebox, but settign the
+        % baseline wouldn't be trivial. It does mean the answers are
+        % highlightable on the student pdf, though.
+            \fill[white] (char.south west) rectangle (char.north east);
+        \fi
+        \def\opacity{\ifstudent 1 \else 0.5 \fi}
+        \draw[
+            ForegroundColour, 
+            thick, 
+            opacity = \opacity
+        ] ($(char.text -| char.west) + (0, -1mm)$) -- ($(char.text -| char.east) + (0, -1mm)$);
+    }
+}
+\ExplSyntaxOn
+
+% #region table
+
+% keys for creating a table response. 
+% rows: number of rows
+% cols: number of columns
+% headers: list of headers
+% header style: style for the headers (e.g., \color{blue}\textbf)
+% minimum column width: minimum width of each column
+% minimum row height: minimum height of each row
+
+\keys_define:nn {tables}{
+    rows .int_set:N = \l__tables_rows_int,
+    columns .int_set:N = \l__tables_columns_int,
+    headers .code:n = {\seq_clear_new:N \l__tables_headers_seq \seq_set_split:Nnn \l__tables_headers_seq {,} {#1}},
+    header~style .code:n = \def\tableheaderstyle{#1},
+    minimum~column~width .dim_set:N = \l__tables_minimum_column_width_dim,
+    minimum~row~height .dim_set:N = \l__tables_minimum_row_height_dim,
+    rows .initial:n = 5,
+    columns .initial:n = 2,
+    headers .initial:n = {},
+    header~style .initial:n = \color{ForegroundColour}\bfseries,
+    minimum~column~width .initial:n = 3cm,
+    minimum~row~height .initial:n = 2.5em,
+}
+
+\newcommand{\answertable}[1]{%
+% Unbelievably annoying to programmatically specify the columns for an actual tabular. So this is a tikz solution.
+    \group_begin: % This is to keep the keys local to this command.
+    \keys_set:nn {tables} {#1}
+    \begin{center}
+        \begin{tikzpicture}
+
+                
+
+            \seq_if_empty:NTF \l__tables_headers_seq {
+            }{
+                \seq_map_indexed_inline:Nn \l__tables_headers_seq {
+                    \node[
+                        minimum~width = \the\l__tables_minimum_column_width_dim,
+                        minimum~height = \the\l__tables_minimum_row_height_dim,
+                        draw = ForegroundColour,
+                        anchor = south~west,
+                        inner~sep = 0pt,
+                        outer~sep = 0pt,
+                        fill = white,
+                        text~width = \the\l__tables_minimum_column_width_dim,
+                        align = center,
+                        font = \tableheaderstyle
+                    ] (header_##1) at ({(##1-1) * \the\l__tables_minimum_column_width_dim}, 0) {##2};
+                }
+            }
+
+            \foreach \r in {1,...,\the\l__tables_rows_int}{
+                \foreach \c in {1,...,\the\l__tables_columns_int}{
+                    \node[
+                        minimum~width = \the\l__tables_minimum_column_width_dim,
+                        minimum~height = \the\l__tables_minimum_row_height_dim,
+                        draw = ForegroundColour,
+                        anchor = north~west,
+                        inner~sep = 0pt,
+                        outer~sep = 0pt,
+                        fill = white,
+                        text~width = \the\l__tables_minimum_column_width_dim,
+                    ] at ({(\c-1) * \the\l__tables_minimum_column_width_dim}, {-(\r-1) * \the\l__tables_minimum_row_height_dim}) {};
+                }
+            }
+            \draw[ForegroundColour, very~thick] (current~bounding~box.north~west) rectangle (current~bounding~box.south~east) (0, 0) -- (0,0 -| current~bounding~box.north~east);
+        \end{tikzpicture}
+    \end{center}
+    \group_end:
+}
+
+% #endregion table
+
+% #region graph
+
+% keys for creating a graph response. (default)
+% x min: minimum value of the x axis (0)
+% x max: maximum value of the x axis (10)
+% x step: step size of the x axis (1)
+% x minor per major: number of minor grid lines per major grid line (5)
+% y min: minimum value of the y axis (0)
+% y max: maximum value of the y axis (10)
+% y step: step size of the y axis (1)
+% y minor per major: number of minor grid lines per major grid line (5)
+% x label: label for the x axis ($x$)
+% y label: label for the y axis ($y$)
+% x label style: style for the x axis label (e.g., \color{blue}\textbf) (\color{ForegroundColour})
+% y label style: style for the y axis label (e.g., \color{blue}\textbf) (\color{ForegroundColour})
+% x grid size: size of the major x grid step (in real dimensions) (1cm)
+% y grid size: size of the major y grid step (in real dimensions) (1cm)
+% show axes: whether to show the axes (true)
+% show ticks: whether to show the axis ticks (true)
+% axis labels at end: whether to put the axis labels at the end of the axes, instead of central (false)
+% padding: grid padding around the axes, in number of major ticks (1)
+
+% User's responsibility to ensure that the grid sizes and axis limits are compatible.
+
+\keys_define:nn {graphs} {
+    x~min .fp_set:N = \l__graphs_x_axis_min_fp,
+    x~max .fp_set:N = \l__graphs_x_axis_max_fp,
+    x~step .fp_set:N = \l__graphs_x_axis_step_fp,
+    x~minor~per~major .int_set:N = \l__graphs_x_axis_minor_per_major_int,
+    y~min .fp_set:N = \l__graphs_y_axis_min_fp,
+    y~max .fp_set:N = \l__graphs_y_axis_max_fp,
+    y~step .fp_set:N = \l__graphs_y_axis_step_fp,
+    y~minor~per~major .int_set:N = \l__graphs_y_axis_minor_per_major_int,
+    x~label .tl_set:N = \l__graphs_x_axis_label_tl,
+    y~label .tl_set:N = \l__graphs_y_axis_label_tl,
+    x~label~style .code:n = \def\graphs_x_axis_label_style{#1},
+    y~label~style .code:n = \def\graphs_y_axis_label_style{#1},
+    x~grid~size .dim_set:N = \l__graphs_x_grid_size_dim,
+    y~grid~size .dim_set:N = \l__graphs_y_grid_size_dim,
+    show~axes .bool_set:N = \l__graphs_show_axes_bool,
+    show~ticks .bool_set:N = \l__graphs_show_ticks_bool,
+    axis~labels~at~end .bool_set:N = \l__graphs_axis_labels_at_end_bool,
+    padding .int_set:N = \l__graphs_padding_int,
+    x~min .initial:n = {0},
+    x~max .initial:n = {10},
+    x~step .initial:n = {1},
+    x~minor~per~major .initial:n = {5},
+    y~min .initial:n = {0},
+    y~max .initial:n = {10},
+    y~step .initial:n = {1},
+    y~minor~per~major .initial:n = {5},
+    x~label .initial:n = {$x$},
+    y~label .initial:n = {$y$},
+    x~label~style .initial:n = {\color{ForegroundColour}},
+    y~label~style .initial:n = {\color{ForegroundColour}},
+    x~grid~size .initial:n = {1cm},
+    y~grid~size .initial:n = {1cm},
+    show~axes .initial:n = {true},
+    show~ticks .initial:n = {true},
+    axis~labels~at~end .initial:n = {false},
+    padding .initial:n = {1}
+}
+
+
+\newcommand{\answergraph}[1]{%
+    \group_begin: % so that the keys are local
+    \keys_set:nn {graphs} {#1}
+    \begin{center}
+        \begin{tikzpicture}
+            \pgfmathsetmacro{\arrowheadlength}{6pt}
+            \pgfmathsetmacro{\arrowheadoverhang}{-1.25*\arrowheadlength}
+
+            \fp_zero_new:N\l__graphs_x_axis_min_major_fp % x min in number of major ticks
+            \fp_set:Nn\l__graphs_x_axis_min_major_fp{\l__graphs_x_axis_min_fp/\l__graphs_x_axis_step_fp}
+            \fp_zero_new:N\l__graphs_x_axis_max_major_fp % x max in number of major ticks
+            \fp_set:Nn\l__graphs_x_axis_max_major_fp{\l__graphs_x_axis_max_fp/\l__graphs_x_axis_step_fp}
+            \dim_zero_new:N\l__graphs_x_axis_min_dim % x min in real dimensions
+            \dim_set:Nn\l__graphs_x_axis_min_dim{\fp_to_decimal:n{\l__graphs_x_axis_min_major_fp}\l__graphs_x_grid_size_dim}
+            \dim_zero_new:N\l__graphs_x_axis_max_dim % x max in real dimensions
+            \dim_set:Nn\l__graphs_x_axis_max_dim{\fp_to_decimal:n{\l__graphs_x_axis_max_major_fp}\l__graphs_x_grid_size_dim}
+
+            \dim_zero_new:N\l__graphs_page_left_dim
+            \dim_zero_new:N\l__graphs_page_right_dim
+            \dim_set:Nn\l__graphs_page_left_dim{\l__graphs_x_grid_size_dim * \fp_to_decimal:n {floor(\l__graphs_x_axis_min_major_fp + 0.49) - \l__graphs_padding_int}}
+            \dim_set:Nn\l__graphs_page_right_dim{\l__graphs_x_grid_size_dim * \fp_to_decimal:n {ceil(\l__graphs_x_axis_max_major_fp - 0.49) + \l__graphs_padding_int}}
+
+            \fp_zero_new:N\l__graphs_y_axis_min_major_fp % y min in number of major ticks
+            \fp_set:Nn\l__graphs_y_axis_min_major_fp{\l__graphs_y_axis_min_fp/\l__graphs_y_axis_step_fp}
+            \fp_zero_new:N\l__graphs_y_axis_max_major_fp % y max in number of major ticks
+            \fp_set:Nn\l__graphs_y_axis_max_major_fp{\l__graphs_y_axis_max_fp/\l__graphs_y_axis_step_fp}
+            \dim_zero_new:N\l__graphs_y_axis_min_dim % y min in real dimensions
+            \dim_set:Nn\l__graphs_y_axis_min_dim{\fp_to_decimal:n{\l__graphs_y_axis_min_major_fp}\l__graphs_y_grid_size_dim}
+            \dim_zero_new:N\l__graphs_y_axis_max_dim % y max in real dimensions
+            \dim_set:Nn\l__graphs_y_axis_max_dim{\fp_to_decimal:n{\l__graphs_y_axis_max_major_fp}\l__graphs_y_grid_size_dim}
+
+            \dim_zero_new:N\l__graphs_page_bottom_dim
+            \dim_zero_new:N\l__graphs_page_top_dim
+            \dim_set:Nn\l__graphs_page_bottom_dim{\l__graphs_y_grid_size_dim * \fp_to_decimal:n {floor(\l__graphs_y_axis_min_major_fp + 0.49) - \l__graphs_padding_int}}
+            \dim_set:Nn\l__graphs_page_top_dim{\l__graphs_y_grid_size_dim * \fp_to_decimal:n {ceil(\l__graphs_y_axis_max_major_fp - 0.49) + \l__graphs_padding_int}}
+
+            \dim_zero_new:N\l__graphs_x_grid_size_minor_dim
+            \dim_set:Nn\l__graphs_x_grid_size_minor_dim{\l__graphs_x_grid_size_dim/\l__graphs_x_axis_minor_per_major_int}
+            \dim_zero_new:N\l__graphs_y_grid_size_minor_dim
+            \dim_set:Nn\l__graphs_y_grid_size_minor_dim{\l__graphs_y_grid_size_dim/\l__graphs_y_axis_minor_per_major_int}
+
+                
+            \draw[ForegroundColour_5] (\l__graphs_page_left_dim, \l__graphs_page_bottom_dim) 
+                grid [
+                    xstep = \l__graphs_x_grid_size_minor_dim,
+                    ystep = \l__graphs_y_grid_size_minor_dim,
+                ]
+                (\l__graphs_page_right_dim, \l__graphs_page_top_dim);
+            
+            \draw[ForegroundColour_3] (\l__graphs_page_left_dim, \l__graphs_page_bottom_dim)
+                grid [
+                    xstep = \l__graphs_x_grid_size_dim,
+                    ystep = \l__graphs_y_grid_size_dim,
+                ]
+                (\l__graphs_page_right_dim, \l__graphs_page_top_dim);
+
+            \bool_if:NTF\l__graphs_show_axes_bool{
+                \fp_compare:nNnTF{\l__graphs_x_axis_min_fp}{<}{\c_zero_fp}{
+                    \draw[
+                        ForegroundColour,
+                        thick,
+                        {Latex[length = \arrowheadlength]}-{Latex[length = \arrowheadlength]},
+                        shorten~<=\arrowheadoverhang,
+                        shorten~>=\arrowheadoverhang
+                    ] (\l__graphs_x_axis_min_dim, 0) -- (\l__graphs_x_axis_max_dim, 0);
+                }{
+                    \draw[
+                        ForegroundColour,
+                        thick,
+                        -{Latex[length = \arrowheadlength]},
+                        shorten~>=\arrowheadoverhang
+                    ] (\l__graphs_x_axis_min_dim, 0) -- (\l__graphs_x_axis_max_dim, 0);
+                }
+                % Exactly the same for the y axis
+                \fp_compare:nNnTF{\l__graphs_y_axis_min_fp}{<}{\c_zero_fp}{
+                    \draw[
+                        ForegroundColour,
+                        thick,
+                        {Latex[length = \arrowheadlength]}-{Latex[length = \arrowheadlength]},
+                        shorten~<=\arrowheadoverhang,
+                        shorten~>=\arrowheadoverhang
+                    ] (0, \l__graphs_y_axis_min_dim) -- (0, \l__graphs_y_axis_max_dim);
+                }{
+                    \draw[
+                        ForegroundColour,
+                        thick,
+                        -{Latex[length = \arrowheadlength]},
+                        shorten~>=\arrowheadoverhang
+                    ] (0, \l__graphs_y_axis_min_dim) -- (0, \l__graphs_y_axis_max_dim);
+                }
+            }{
+                % if we're not showing the axes, we don't want to show the ticks or labels either
+                \tl_clear:N\l__graphs_x_axis_tick_label_tl
+                \tl_clear:N\l__graphs_y_axis_tick_label_tl
+                \bool_set_false:N\l__graphs_show_ticks_bool
+            }
+
+            \bool_if:NTF\l__graphs_show_ticks_bool{
+                \foreach \xi in {\fp_to_decimal:n{ceil(\l__graphs_x_axis_min_major_fp)},..., \fp_to_decimal:n{floor(\l__graphs_x_axis_max_major_fp)}}{
+                    \draw[ForegroundColour, thick] (\xi\l__graphs_x_grid_size_dim, 0) -- ++ (0, -1mm) node[
+                        below,
+                        ForegroundColour,
+                        fill = white,
+                        fill~opacity = 0.6,
+                        text~opacity = 1,
+                    ] {\footnotesize$\fp_to_decimal:n{\xi * \l__graphs_x_axis_step_fp}$};
+                }
+                \foreach \yi in {\fp_to_decimal:n{ceil(\l__graphs_y_axis_min_major_fp)},..., \fp_to_decimal:n{floor(\l__graphs_y_axis_max_major_fp)}}{
+                    \draw[ForegroundColour, thick] (0, \yi\l__graphs_y_grid_size_dim) -- ++ (-1mm, 0) node[
+                        left,
+                        ForegroundColour,
+                        fill = white,
+                        fill~opacity = 0.6,
+                        text~opacity = 1,
+                    ] {\footnotesize$\fp_to_decimal:n{\yi * \l__graphs_y_axis_step_fp}$};
+                }
+            }{}
+
+            % axis labels
+            \bool_if:NTF\l__graphs_axis_labels_at_end_bool {
+                \node[
+                    right = {0.5\l__graphs_x_grid_size_dim},
+                    ForegroundColour,
+                    fill = white,
+                    fill~opacity = 0.6,
+                    text~opacity = 1,
+                    rectangle,
+                    rounded~corners = 2mm,
+                    inner~sep = 2mm,
+                ] at (\l__graphs_x_axis_max_dim, 0) {\graphs_x_axis_label_style\l__graphs_x_axis_label_tl};
+                \node[
+                    above = {0.5\l__graphs_y_grid_size_dim},
+                    ForegroundColour,
+                    fill = white,
+                    fill~opacity = 0.6,
+                    text~opacity = 1,
+                    rectangle,
+                    rounded~corners = 2mm,
+                    inner~sep = 2mm,
+                ] at (0, \l__graphs_y_axis_max_dim) {\graphs_y_axis_label_style\l__graphs_y_axis_label_tl};
+            }{
+                \node[
+                    below = {0.5\l__graphs_y_grid_size_dim},
+                    anchor = north,
+                    ForegroundColour,
+                    fill = white,
+                    fill~opacity = 0.6,
+                    text~opacity = 1,
+                    rectangle,
+                    rounded~corners = 2mm,
+                    inner~sep = 2mm,
+                ] at (0.5\l__graphs_x_axis_min_dim + 0.5\l__graphs_x_axis_max_dim, 0) {\graphs_x_axis_label_style\l__graphs_x_axis_label_tl};
+                \node[
+                    left = {0.5\l__graphs_x_grid_size_dim},
+                    anchor = south,
+                    ForegroundColour,
+                    fill = white,
+                    fill~opacity = 0.6,
+                    text~opacity = 1,
+                    rectangle,
+                    rounded~corners = 2mm,
+                    inner~sep = 2mm,
+                    rotate = 90,
+                ] at (0, 0.5\l__graphs_y_axis_min_dim + 0.5\l__graphs_y_axis_max_dim) {\graphs_y_axis_label_style\l__graphs_y_axis_label_tl};
+            }
+        \end{tikzpicture}
+    \end{center}
+    \group_end:
+}
+
+
+% #endregion graph
+
+\ExplSyntaxOff
+
+% #endregion responses
+
+% #region Headers and footers
+
+\fancyhead[r]{\scshape\color{ForegroundColour_2}Worksheet \ifextension with extension activity\fi\ifinstructor\color{Red}(Answers)\fi}
+
+% #endregion Headers and footers

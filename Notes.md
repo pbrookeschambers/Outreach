@@ -207,3 +207,14 @@
     - `cover.tex`
     - `instructions.tex`
     - `worksheet.tex`
+
+#### Compilation order:
+
+- `cover.tex`, to generate the metadata for the other files
+- `instructions.tex`
+    - as `student`, twice
+    - as `instructor`, twice
+- `cover.tex`, twice, now that the safety file has been generated
+- `worksheet.tex`
+    - as `student`, twice
+    - as `instructor`, twice

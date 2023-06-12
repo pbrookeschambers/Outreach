@@ -1,0 +1,121 @@
+% Some common functionality shared by both instructions and worksheets.
+
+\ProvidesPackage{NUIW}[2023/06/04 Custom package for Newcastle University outreach activities instructions]
+\edef\packagepath{\CurrentFilePath}
+\RequirePackage{\packagepath/NUOutreach}
+
+% #region flags
+\newif\ifstudent
+\newif\ifinstructor % Will always be the opposite of \ifstudent
+\studentfalse % default
+
+\newif\ifextension
+\extensionfalse % default
+
+% We'll use these to track whether anything will change between student and
+% instructor versions, and normal and extension versions. This should let us
+% skip unnecessary compilations.
+\newif\iftracking
+\trackingfalse
+
+\newif\ifextensionchanges
+\extensionchangesfalse
+\newif\ifstudentchanges
+\studentchangesfalse
+
+
+\checkfile{\jobname.flags}
+\ifnum\filestatus=0% File exists and is not empty
+    \input{\jobname.flags}
+\else
+    \ifnum\filestatus=1% File exists and is empty
+        \typeout{The flags file '\jobname.flags' is empty! Assuming default settings.}
+    \else
+        \typeout{The flags file '\jobname.flags' does not exist! Assuming default settings.}
+    \fi
+\fi
+
+\ifstudent
+    \instructorfalse
+\else
+    \instructortrue
+\fi
+
+
+
+% #endregion flags
+% #region Environments
+% For students only:
+\NewEnviron{studentonly}{\iftracking\global\studentchangestrue\fi\ifstudent\BODY\fi}
+% For instructors only:
+\NewEnviron{instructoronly}{\iftracking\global\studentchangestrue\fi\ifinstructor\BODY\fi}
+% For the extension activity only:
+\NewEnviron{extensiononly}{\iftracking\global\extensionchangestrue\fi\ifextension\BODY\fi}
+% For students only, 
+\NewEnviron{studentextensiononly}{\iftracking\global\studentchangestrue\global\extensionchangestrue\fi\ifstudent\ifextension\BODY\fi\fi}
+\NewEnviron{instructorextensiononly}{\iftracking\global\studentchangestrue\global\extensionchangestrue\fi\ifinstructor\ifextension\BODY\fi\fi}
+
+% #endregion Environments
+
+\newcommand\extension{
+    \ifextension%
+    \else%
+    \end{document}%
+    \fi%
+}
+
+% #region Title page
+
+\checkfile{\jobname.meta}
+\ifnum\filestatus=0% File exists and is not empty
+    \input{\jobname.meta}
+\else
+    \def\activityname{}
+\fi
+% \title{\activityname}
+\renewcommand{\maketitle}{
+    \begin{titlepage}
+        \begin{center}
+            \leavevmode
+            \bgskip\par
+            \leavevmode
+            {\Huge Newcastle University\par\LARGE School of Maths, Stats, and Physics\par}
+            \smskip
+            {\includegraphics[height = 5.5cm]{\packagepath/ncl_crest.pdf}\par}
+            {\Huge\activityname\par}
+            \smskip
+            {\large \doctypeline}
+            %
+            \ifinstructor
+                \vfill
+                {\Large\color{Red}Not for distribution to students}
+                \smskip
+            \fi
+        \end{center}
+    \end{titlepage}
+}
+
+\AtBeginDocument{
+    \maketitle
+    \pagestyle{fancy}
+    \trackingtrue
+}
+
+\AtEndDocument{
+    \newwrite\statusfile
+    \immediate\openout\statusfile=\jobname.track
+    \ifstudentchanges
+        \immediate\write\statusfile{student_changes = True}
+    \else
+        \immediate\write\statusfile{student_changes = False}
+    \fi
+    \ifextensionchanges
+        \immediate\write\statusfile{extension_changes = True}
+    \else
+        \immediate\write\statusfile{extension_changes = False}
+    \fi
+    \immediate\closeout\statusfile
+}
+
+% #endregion Title page
+

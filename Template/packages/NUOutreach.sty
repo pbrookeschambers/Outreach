@@ -2,13 +2,23 @@
 \RequirePackage[table]{xcolor}
 \RequirePackage[most]{tcolorbox}
 \RequirePackage{tikz}
-\usetikzlibrary{calc, shapes, tikzmark}
+\usetikzlibrary{calc, shapes, tikzmark, arrows, arrows.meta}
+\RequirePackage{tikzpagenodes}
 \RequirePackage{ifdraft} % if we're in draft mode, we might want to give the user hints for missing information.
 \RequirePackage{titlesec}
+\RequirePackage{enumitem}
+\RequirePackage{fancyhdr}
+\RequirePackage{lastpage}
+
+
+
+\edef\packagepath{\CurrentFilePath}
+
+\input{\packagepath/themes/ncl.tex}
 
 % #region page setup
 
-\RequirePackage[margin = 0.7in]{geometry}
+\RequirePackage[margin = 0.7in, top = 1in, bottom = 1in, headheight = 0.25in]{geometry}
 \RequirePackage[T1]{fontenc}
 
 % IDK which font to use. Some options:
@@ -24,14 +34,94 @@
 \newcommand\smskip{\vspace{0.75cm}}
 \newcommand\bgskip{\vspace{3cm}}
 
-% titlesec is misbehaving. TODO: come back to this.
+\setlength\parskip{1.5em}
+\RequirePackage{indentfirst}
+\setlist[itemize]{topsep=-0.5em} % Adjust spacing before itemize. This is {1em - \parskip}, since there will always be a \parskip before the list.
+
+% #region titles
+
+\def\titlelineindent{0.5cm}
+\titleformat
+   {\section}
+   {\normalfont\color{Accent1}\LARGE}
+   {}
+   {0pt}
+   {\tikzmarknode{title}}
+   [
+        {
+            \tikz[
+                overlay, 
+                remember picture
+            ]{
+                \coordinate (rule start) at ($(title.south west) + (0, -0.5em)$); 
+                \draw[Accent1, thick, shorten > = \titlelineindent, shorten < = \titlelineindent] (rule start) -- (current page text area.east |- rule start);
+            }
+        }
+        \vspace{-0.5em}
+        \vspace{-2\parskip} % Returns us to normal spacing
+    ]
+
+\titleformat
+    {\subsection}
+    {\normalfont\color{Accent1}\Large}
+    {}
+    {0pt}
+    {\tikzmarknode{title}}
+    [
+         {
+             \tikz[
+                 overlay, 
+                 remember picture
+             ]{
+                 \coordinate (rule start) at ($(title.south west) + (0, -0.5em)$); 
+                 \draw[Accent1, shorten < = \titlelineindent] (rule start) -- (current page text area.center |- rule start);
+             }
+         }
+         \vspace{-0.5em}
+         \vspace{-2\parskip}
+     ]
+
+\titleformat
+    {\subsubsection}
+    {\normalfont\color{ForegroundColour}\large}
+    {}
+    {0pt}
+    {\tikzmarknode{title}}
+    [
+         {
+             \tikz[
+                 overlay, 
+                 remember picture
+             ]{
+                 \coordinate (rule start) at ($(title.south west) + (0, -0.5em)$); 
+                 \draw[ForegroundColour, shorten < = \titlelineindent, shorten > = \titlelineindent] (rule start) -- (title.east |- rule start);
+             }
+         }
+         \vspace{-0.5em}
+         \vspace{-2\parskip}
+     ]
+
+% #endregion titles
+
+% #region Headers and footers
+\newlength\logoheight
+\setlength\logoheight{0.5in}
+\fancyhead{} % clear all header fields
+\fancyfoot{} % clear all footer fields
+\fancyhead[l]{\color{ForegroundColour_2}\Large\scshape\activityname}
+\fancyfoot[l]{\includegraphics[height=\logoheight]{\packagepath/ncl_logo.pdf}}
+\fancyfoot[r]{\raisebox{\logoheight}{\raisebox{-\height}{\color{ForegroundColour_2}\scshape School of Maths, Stats, and Physics}}}
+\fancyfoot[c]{\raisebox{\logoheight}{\raisebox{-\height}{\color{ForegroundColour_2}\scshape Page~\thepage~of~\pageref{LastPage}}}}
+\renewcommand{\footrulewidth}{\headrulewidth}
+\addtolength{\textheight}{-2em}
+\setlength{\footskip}{\logoheight}
+\addtolength{\footskip}{2em}
+\renewcommand{\headrule}{\vspace{-8pt}\color{ForegroundColour_3}\hrulefill}
+\renewcommand{\footrule}{\vspace{-8pt}\color{ForegroundColour_3}\hrulefill}
+% #endregion Headers and footers
 
 % #endregion page setup
 
-
-\edef\packagepath{\CurrentFilePath}
-
-\input{\packagepath/themes/ncl.tex}
 
 
 
@@ -71,8 +161,8 @@
     %
     % Optional argument is for if special behaviour is required for draft mode.
     %
-    \def\ifgiven@tmp{#1}%
-    \ifx\ifgiven@tmp\@nnil%
+    \def\ifgiven@outer@tmp{#1}%
+    \ifx\ifgiven@outer@tmp\@nnil%
         \ifgiven@nodraft{#2}{#3}{#4}%
     \else%
         \ifgiven@draft{#2}{#3}{#4}{#1}%
@@ -82,7 +172,7 @@
 \newcommand\ifgiven@nodraft[3]{
     % ifgiven@nodraft{test macro}{if given}{if not given}
     \expandafter\def\expandafter\ifgiven@tmp\expandafter{#1}%
-    \ifx\tmp\@nnil%
+    \ifx\ifgiven@tmp\@nnil%
     #3%
     \else%
     #2%
@@ -92,7 +182,7 @@
 \newcommand\ifgiven@draft[4]{
     % ifgiven@draft{test macro}{if given}{if not given, not draft}{if not given, draft}
     \expandafter\def\expandafter\ifgiven@tmp\expandafter{#1}%
-    \ifx\tmp\@nnil%
+    \ifx\ifgiven@tmp\@nnil%
     \ifdraft{#4}{#3}%
     \else%
     #2%
@@ -147,6 +237,7 @@
     topsep at break = 1.5em,
     bottomsep at break = 1em,
     top = -0.5em, % parskip is 1.5em, so this is 1em, i.e. the normal spacing before the first paragraph
+    after = \par,%
     #1
 }
 

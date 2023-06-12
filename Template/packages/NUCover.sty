@@ -4,19 +4,9 @@
 
 \RequirePackage{mdframed}
 
-% \RequirePackage{expl3}
 \RequirePackage{graphicx}
 \RequirePackage{tabularx}
-% \RequirePackage{listofitems}
 
-
-% #region File IO Setup
-
-\def\meta@filename{safety.log}
-
-\newread\meta@file
-
-% #endregion File IO Setup
 
 % #region Parameters
 
@@ -48,19 +38,19 @@
 \seq_clear_new:N \g_curriculumn_links_list
 \newcommand\prerequisite[2][\@nil]{%
     \def\tmp{#1}
-    \ifgiven{\tmp}{
-        \seq_gput_right:Nn \g_prerequisitesextended_list {#2}%
-    }{
+    \ifx\tmp\@nnil
         \seq_gput_right:Nn \g_prerequisites_list {#2}%
-    }
+    \else
+        \seq_gput_right:Nn \g_prerequisitesextended_list {#2}%
+    \fi
 }
 \newcommand\curriculumlink[2][\@nil]{%
     \def\tmp{#1}
-    \ifgiven{\tmp}{
-        \seq_gput_right:Nn \g_curriculumn_links_list {{\color{Accent1}#1~|~}#2}%
-    }{
+    \ifx\tmp\@nnil
         \seq_gput_right:Nn \g_curriculumn_links_list {#2}%
-    }
+    \else
+        \seq_gput_right:Nn \g_curriculumn_links_list {{\color{Accent1}#1~|~}#2}%
+    \fi
 }
 \ExplSyntaxOff
 
@@ -194,6 +184,7 @@
 
 \renewcommand*{\maketitle}{%
 \begin{titlepage}
+    \begin{center}
     % Add duration and stage, relative to the page margins
 \begin{tikzpicture}[overlay, remember picture]
     \node[below right = 1cm, align = left, text width = 0.4\linewidth] at ($(current page.north west) + (1, -1)$) {
@@ -202,11 +193,11 @@
         ]{%
             \@duration%
         }{%
-            \ifgiven{\@durationextended}{%
-                \showDuration[\@durationextended]{\@duration}%
-            }{%
+            \ifx\@durationextended\@nnil
                 \showDuration{\@duration}%
-            }%
+            \else
+                \showDuration[\@durationextended]{\@duration}%
+            \fi%
         }{}
     };
     \node[below left = 1cm, align = right, text width = 0.4\linewidth] at ($(current page.north east) + (-1, -1)$) {
@@ -220,8 +211,7 @@
         }{}
     };
 \end{tikzpicture}
-\begin{center}
-    \bgskip
+    \bgskip\par
     {\Huge Newcastle University\par\LARGE School of Maths, Stats, and Physics\par}
     \smskip
     {\includegraphics[height = 5.5cm]{\packagepath/ncl_crest.pdf}\par}
@@ -263,7 +253,7 @@
     \setlength{\arrayrulewidth}{0.5pt}
     \begin{tabularx}{0.95\linewidth}{|X r||p{\colwidth}|p{\colwidth}||p{\colwidth}|p{\colwidth}||p{\colwidth}|p{\colwidth}||p{\colwidth}|p{\colwidth}|}
         \hline
-        \multicolumn{2}{|r||}{\color{blue}Date $\longrightarrow$} & \multicolumn{2}{c||}{}& \multicolumn{2}{c||}{}& \multicolumn{2}{c||}{}& \multicolumn{2}{c|}{}\\\hline
+        \multicolumn{2}{|r||}{\color{Blue}\small Date $\longrightarrow$} & \multicolumn{2}{c||}{}& \multicolumn{2}{c||}{}& \multicolumn{2}{c||}{}& \multicolumn{2}{c|}{}\\\hline
         \bfseries Equipment & \bfseries Per~Set & \Repeat{\equipmentcolumns - 1}{\multicolumn{1}{c|}{\bfseries Out} & \multicolumn{1}{c||}{\bfseries In} &} \multicolumn{1}{c|}{\bfseries Out} & \multicolumn{1}{c|}{\bfseries In} \\\hline
         \seq_map_function:NN \g_equipment_seq \parse_equipment:n
     \end{tabularx}    
@@ -283,57 +273,41 @@
 % #endregion Equipment
 
 
-% This is temporary until I can get titlesec to behave ========================
-\newcommand\header[1]{%
-    \par
-    {\vspace{1.25em}\noindent\LARGE\textcolor{Accent1}{\tikzmarknode{header}{#1}}%
-    \begin{tikzpicture}[overlay, remember picture]
-        \draw[Accent1, thin] let \p1 = (header.south west), \p2 = (current page.center) 
-        in (\x1 + 1em, \y1 - 0.5em) -- (\x2, \y1 - 0.5em);
-    \end{tikzpicture}
-        \par\vspace{1.25em}}
-}
-\newcommand\subheader[1]{%
-    \par
-    {\vspace{1.25em}\noindent\Large\textcolor{Accent1}{\tikzmarknode{header}{#1}}%
-    \begin{tikzpicture}[overlay, remember picture]
-        \draw[Accent1, thin] let \p1 = (header.south west), \p2 = (current page.center) 
-        in (\x1 + 1em, \y1 - 0.5em) -- (\x2, \y1 - 0.5em);
-    \end{tikzpicture}
-        \par\vspace{1.25em}}
-}
-%==============================================================================
-
 \newcommand\showPrerequisites[1]{%
-    \header{Prerequisites}
+    % \header{Prerequisites}
+    \section{Prerequisites}
         Before starting this activity, participants should be familiar with:
         #1
 }
 \newcommand\showPrerequisitesEmpty{
-    \header{Prerequisites}
+    % \header{Prerequisites}
+    \section{Prerequisites}
     There are no prerequisites for the core activity.
 }
 \newcommand{\showExtendedPrerequisites}[1]{
-    \subheader{Extension}
+    % \subheader{Extension}
+    \subsection{Extension}
     Before starting the extension for this activity, participants should be familiar with:
     #1
 }
 
 \newcommand{\showCurriculumLinks}[1]{
-    \header{Links to Curriculum}
+    % \header{Links to Curriculum}
+    \section{Links to Curriculum}
     This activity draws on the following areas of the curriculum:
     #1
 }
 
 \newcommand{\showSafety}{
-    \checkfile{\jobname.meta}
+    \checkfile{\jobname.safety}
     \ifnum\filestatus=0 % file exists and isn't empty
-        \header{Safety}
-        \begin{warningbox}[top = 1em]
-            \begin{itemize}
-                \input{\jobname.meta}
+        % \header{Safety}
+        \section{Safety Considerations}
+        % \begin{warningbox}[top = 1em]
+            \begin{itemize}[leftmargin = 1in]
+                \input{\jobname.safety}
             \end{itemize}
-        \end{warningbox}
+        % \end{warningbox}
     \fi
 }
 
@@ -382,6 +356,11 @@
 % #endregion Frontmatter
 
 \AtBeginDocument{
+    \newwrite\metafile
+    \immediate\openout\metafile=\jobname.meta
+    \immediate\write\metafile{\noexpand\def\noexpand\activityname{\@title}}
+    \immediate\closeout\metafile
     \maketitle
     \makefrontmatter
+    \pagenumbering{gobble} % Turn off page numbering
 }
