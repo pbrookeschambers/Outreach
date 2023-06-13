@@ -6,16 +6,29 @@
 
 % #region responses
 
+\newtcolorbox{answerbox}[1][]{%
+    enhanced,
+    colback = white,
+    colframe= Accent1,
+    colupper = ForegroundColour,
+    before upper = {\setlength\parskip{1.5em}\setlength\parindent{17pt}\par}, % set the normal indent and paragraph skip
+    topsep at break = 1.5em,
+    bottomsep at break = 1em,
+    top = 1em, 
+    after = \par,
+    #1
+}
+
 \newcommand\answertext[2][10em]{
     \def\tmp{#2}
-    \begin{tcolorbox}[height = #1] 
+    \begin{answerbox}[height = #1] 
         \ifx\tmp\empty%
         \else%
             \begin{instructoronly}
                 \textbf{Answer:} #2
             \end{instructoronly}
         \fi
-    \end{tcolorbox}
+    \end{answerbox}
 }
 
 \newcommand\answertextlong[2][15em]{
@@ -366,3 +379,34 @@
 \fancyhead[r]{\scshape\color{ForegroundColour_2}Worksheet \ifextension with extension activity\fi\ifinstructor\color{Red}(Answers)\fi}
 
 % #endregion Headers and footers
+
+% #region questions
+
+\newcounter{questioncounter}
+\setcounter{questioncounter}{0}
+\newcounter{subquestioncounter}[questioncounter]
+\setcounter{subquestioncounter}{0}
+
+\newcommand{\question}[1]{
+    \def\tmp{#1}
+    \stepcounter{questioncounter}
+    \section{
+        Question \thequestioncounter%
+        \ifx\tmp\empty%
+        \else: #1
+        \fi
+    }
+}
+
+\newcommand{\subquestion}[1]{
+    \def\tmp{#1}
+    \stepcounter{subquestioncounter}
+    \subsection{
+        Question \thequestioncounter.\alph{subquestioncounter}%
+        \ifx\tmp\empty%
+        \else: #1
+        \fi
+    }
+}
+
+% #endregion questions

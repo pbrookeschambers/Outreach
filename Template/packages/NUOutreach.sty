@@ -218,7 +218,7 @@
     title   = {\cautionSymbol\hfill\large\raisebox{0.5em}{\bfseries \Large Caution!}\hfill\cautionSymbol}, % Yes there's much better ways to do this, but I'm lazy
 	% We could potentially be better having a single file we refer to for performance, but I doubt any of these will be long enough for this to be worth it.
     coltitle = ForegroundColour,
-    before upper = {\setlength\parskip{1.5em}\setlength\parindent{17pt}}, % set the normal indent and paragraph skip
+    before upper = {\setlength\parskip{1.5em}\setlength\parindent{17pt}\par}, % set the normal indent and paragraph skip
     breakable,
     lines before break = 4,
     % Border when the box is split across multiple pages
@@ -236,7 +236,7 @@
     },
     topsep at break = 1.5em,
     bottomsep at break = 1em,
-    top = -0.5em, % parskip is 1.5em, so this is 1em, i.e. the normal spacing before the first paragraph
+    top = 1em,
     after = \par,%
     #1
 }

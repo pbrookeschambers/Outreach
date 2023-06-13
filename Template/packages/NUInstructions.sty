@@ -67,7 +67,7 @@
     colupper = ForegroundColour,
     title   = {\Large\color{BackgroundColour}\stepcounter{taskcounter}Task \thetaskcounter: #1}, 
     coltitle = ForegroundColour,
-    before upper = {\setlength\parskip{1.5em}\setlength\parindent{17pt}}, % set the normal indent and paragraph skip
+    before upper = {\setlength\parskip{1.5em}\setlength\parindent{17pt}\par}, % set the normal indent and paragraph skip
     breakable,
     lines before break = 4,
     % Border when the box is split across multiple pages
@@ -85,7 +85,7 @@
     },
     topsep at break = 1.5em,
     bottomsep at break = 1em,
-    top = -0.5em, % parskip is 1.5em, so this is 1em, i.e. the normal spacing before the first paragraph
+    top = 1em,
     after = \par,
 }
 

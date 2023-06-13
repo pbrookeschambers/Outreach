@@ -119,6 +119,8 @@
             - Some sort of scoring system?
             - Some pre-made games to solve
     - Some web-based simulation stuff, would require no equipment
+        - Solar system simulator
+            - Link to exoplanet detection methods?
 
 - Rubber band powered vehicles (potential and kinetic energy):
     - car (duh)
