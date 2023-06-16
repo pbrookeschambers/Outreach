@@ -1,0 +1,35 @@
+\documentclass{standalone}
+
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{calc, positioning, decorations, decorations.pathmorphing}
+\def\packagedir{../../../packages}
+\input{\packagedir/themes/ncl.tex}
+
+\begin{document}
+% \pagecolor{BackgroundColour}
+\begin{tikzpicture}[line join = round, line cap = round, line width = 2mm]
+    \begin{scope}
+        \path[draw = ForegroundColour] (45:1 and 0.25) arc (45:-225: 1 and 0.25);
+        \path[draw = ForegroundColour_2, dotted] (0, -6) circle (2 and 0.5);
+        \path[draw = ForegroundColour, rounded corners = 0.5cm] (0:1 and 0.25) -- ++ (0, -1.5) -- ++ (1, -1) -- ++ (0, -6) ++ (-4, 0) -- ++ (0, 6) -- ++ (1, 1) -- ++ (0, 1.5);
+        \path[draw = ForegroundColour] (2, -8.5) arc (360:180:2 and 0.5);
+    \end{scope}
+    \begin{scope}[shift = {(0, 5.5)}]
+    \path[draw = ForegroundColour, fill = Red_3, rotate = -90, scale = 0.75]  
+                                                   (20   :6 and 5 -| 8.5, 0) 
+                                                -- (17.5 :6 and 5 -| 8  , 0) 
+                                                -- (17.5 :6 and 5 -| 7  , 0) 
+                                                -- (15   :6 and 5 -| 6.5, 0) 
+                                                -- (15   :6 and 5) 
+                                                arc (5:335:6 and 5) 
+                                                -- (345  :6 and 5 -| 6.5, 0)
+                                                -- (342.5:6 and 5 -| 7  , 0)
+                                                -- (342.5:6 and 5 -| 8  , 0) 
+                                                -- (340  :6 and 5 -| 8.5, 0) 
+                                                -- cycle;
+    \end{scope}
+    \pgfresetboundingbox
+    \useasboundingbox (-10, 12.5) rectangle (10, -12.5);
+\end{tikzpicture}
+\end{document}

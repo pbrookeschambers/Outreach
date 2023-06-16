@@ -9,6 +9,7 @@ import subprocess
 import os
 from pathlib import Path
 import sys
+import re
 
 import rich
 from rich.panel import Panel
@@ -17,6 +18,7 @@ from rich.table import Table
 from rich.console import Group
 
 from display import LoggerLayout, Layout
+
 
 # lazy global variables
 logs = None
@@ -544,6 +546,7 @@ def main():
 
     skip_students = []
     skip_extensions = []
+    skip_blank = False
     for progress, tc in logs.outreach.track(
         to_compile, name="Compiling", exits_early=True
     ):
@@ -560,30 +563,48 @@ def main():
             raise FileNotFoundError(f"File {tc['file']} does not exist")
 
         if last_file is not None and last_file["file"] == tc["file"]:
-            # We've already compiled this file at least once. Check if it's changed since then
-            with open(directory / f"{jobname}.track", "r") as file:
-                lines = [l.strip().lower() for l in file.readlines()]
-            student_changes = lines[0].split("=")[1].strip() == "true"
-            extension_changes = lines[1].split("=")[1].strip() == "true"
-            if not student_changes:
-                # Student/instructor makes no difference, so skip any whichever we've not already done
-                skip_students.append(not last_file["student"])
-            if not extension_changes:
-                # Extension/no extension makes no difference, so skip any whichever we've not already done
-                skip_extensions.append(not last_file["extension"])
+            if skip_blank:
+                last_file = tc
+                continue
+            if len(skip_students) == 0 and len(skip_extensions) == 0: # only check if we haven't already
+                # We've already compiled this file at least once. Check if it's changed since then
+                with open(directory / f"{jobname}.track", "r") as file:
+                    lines = [l.strip().lower() for l in file.readlines()]
+                student_changes = lines[0].split("=")[1].strip() == "true"
+                extension_changes = lines[1].split("=")[1].strip() == "true"
+                if not student_changes:
+                    # Student/instructor makes no difference, so skip any whichever we've not already done
+                    skip_students.append(not last_file["student"])
+                if not extension_changes:
+                    # Extension/no extension makes no difference, so skip any whichever we've not already done
+                    skip_extensions.append(not last_file["extension"])
         else:
             skip_students = []
             skip_extensions = []
+            skip_blank = False
 
         if not args.force_all and (
             tc["student"] in skip_students or tc["extension"] in skip_extensions
         ):
             if verbose:
                 logs.outreach.info(
-                    f"Skipping {tc['file']} for {'student' if tc['student'] else 'instructor'} with{'' if tc['extension'] else 'out'} extension"
+                    f"Skipping `{tc['file']}` for {'student' if tc['student'] else 'instructor'} with{'' if tc['extension'] else 'out'} extension"
                 )
+            last_file = tc
             continue
 
+        if tc["file"].stem != "cover" and not args.force_all:
+            # Cover can actually be empty. Otherwise, if the file is empty we skip it
+            with open(tc["file"], "r") as file:
+                contents = file.read()
+                document_contents = re.search(r"^(?<!%)\s*?\\begin{document}(.*?)^(?<!%)\\end{document}", contents, flags = re.DOTALL | re.MULTILINE).group(1)
+                document_contents = "\n".join([l for l in document_contents.split("\n") if not l.strip().startswith("%")])
+                if len(document_contents.strip()) == 0:
+                    if verbose:
+                        logs.outreach.info( f"Skipping `{tc['file']}` as it seems to be blank. Use `--force_all` to force compilation.")
+                    skip_blank = True
+                    last_file = tc
+                    continue
         # set flags
         with open(directory / f"{jobname}.flags", "w+") as file:
             file.write(f"\\student{tc['student']}".lower())

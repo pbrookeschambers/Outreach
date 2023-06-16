@@ -25,37 +25,6 @@
 
 % #endregion Safety
 
-% #region Tasks
-
-\newcounter{taskcounter}
-\setcounter{taskcounter}{0}
-\newcounter{subtaskcounter}[taskcounter]
-\setcounter{subtaskcounter}{0}
-
-\newcommand{\task}[1]{
-    \def\tmp{#1}
-    \stepcounter{taskcounter}
-    \section{
-        Task \thetaskcounter%
-        \ifx\tmp\empty%
-        \else: #1
-        \fi
-    }
-}
-
-\newcommand{\subtask}[1]{
-    \def\tmp{#1}
-    \stepcounter{subtaskcounter}
-    \subsection{
-        Task \thetaskcounter.\alph{subtaskcounter}%
-        \ifx\tmp\empty%
-        \else: #1
-        \fi
-    }
-}
-
-% #endregion Tasks
-
 \def\doctypeline{ Instructions for \ifstudent students\else activity leaders\fi\ifextension, with extension activity\fi}
 
 % #region boxes

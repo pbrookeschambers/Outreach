@@ -21,12 +21,15 @@
 \RequirePackage[margin = 0.7in, top = 1in, bottom = 1in, headheight = 0.25in]{geometry}
 \RequirePackage[T1]{fontenc}
 
+\usepackage[cm]{sfmath} % Sans-serif maths, only computer modern
+
 % IDK which font to use. Some options:
 % \RequirePackage[sfdefault]{AlegreyaSans}
 % \renewcommand*\oldstylenums[1]{{\firaoldstyle #1}}
 
 \RequirePackage[sfdefault, light]{FiraSans}
 \renewcommand*\oldstylenums[1]{{\firaoldstyle #1}}
+\renewcommand{\bfdefault}{sb}
 
 % \RequirePackage{sansmathfonts}
 % \renewcommand*\familydefault{\sfdefault}
@@ -236,7 +239,7 @@
     },
     topsep at break = 1.5em,
     bottomsep at break = 1em,
-    top = 1em,
+    top = -0.5em,
     after = \par,%
     #1
 }
@@ -245,3 +248,21 @@
 
 
 % #endregion Boxes
+
+
+\newcommand\itemlabel[2][\@nil]{%
+    \def\tmp{#1}
+    \ifx\tmp\@nnil
+        \item[\tikz{%
+            \path[use as bounding box] (0.1,0) rectangle ++ (-1, -1em);
+            \node[below left, align = right, text = Accent1]                  (n) at (0,0) {\bfseries #2}; 
+            \draw[Accent2, thick, densely dotted] ($(n.south east) + (0.1, 0.05)$) -- ($(n.north east) + (0.1, -0.05)$);
+        }]
+    \else
+        \item[\tikz{%
+            \path[use as bounding box] (0.1,0) rectangle ++ (-1, -1em);
+            \node[below left, align = right, text = Accent1, text width = #1] (n) at (0,0) {\bfseries #2}; 
+            \draw[Accent2, thick, densely dotted] ($(n.south east) + (0.1, 0.05)$) -- ($(n.north east) + (0.1, -0.05)$);
+        }]
+    \fi
+}

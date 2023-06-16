@@ -1,0 +1,60 @@
+\documentclass{article}
+
+\usepackage{/home/peter/Documents/outreach/Template/packages/NUWorksheet}
+\usepackage{siunitx}
+\DeclareSIUnit{\year}{yr}
+
+\newcommand{\important}[1]{\textbf{#1}}
+
+\begin{document}
+
+\task{}
+
+\question{}
+Watch carefully for the trails of cloud left by the alpha particles. You should
+see that they are fairly short, around \SI{5}{\centi\metre} long. Why do they stop?
+
+\answertext{}
+
+\question{}
+
+The number of radioactive nuclei remaining in a sample decreases exponentially. If we know the initial number of atoms $N_0$, we can work out the number remaining after a given time $t$ using the equation
+\begin{equation*}
+    N(t) = N_0 e^{-\lambda t}\,,
+\end{equation*}
+where $\lambda$ is the \important{decay constant}. This is related to the \important{half life} $t_{\frac{1}{2}}$ (the time it takes for the number of particles to halve) by the equation
+\begin{equation*}
+    \lambda = \frac{\ln (2)}{t_{\frac{1}{2}}}\,.
+\end{equation*}
+
+We can define the \important{activity} as the number of particles decaying per second, or the rate of change of the number of particles. This is given by
+\begin{equation*}
+    A = -\frac{dN}{dt} = \lambda N\,.
+\end{equation*}
+
+Watch your cloud chamber for $10$ seconds, and count the number of trails you see in this time. Repeat this three times, and fill in the table below:
+
+\answertable{rows = 3, columns = 2, headers = {Time (s), Number of Trails}}
+
+Average: \answerinline{some number}
+
+What is the activity of the source? $A = $ \answerinline{some number / 10} \si{\per\second}
+
+\question{}
+
+The half-life of Americium-241 is \SI{432.2}{\year}. How many atoms of Americium-241 are there in your source? 
+
+\answertext[prompt = {$N = $}, answer ={ $\sim10^{25}$}]{}
+
+The atomic mass of Americium-241 is \SI{241.057}{\atomicmassunit}. What is the mass of your source? (you may use \SI{1}{\atomicmassunit} = \SI{1.66e-27}{\kilo\gram}, $N_A = \SI{6.02e23}{\per\mole}$)
+
+\answertext[prompt = {$m = $}, answer = {$\sim 1$}, unit = \si{\gram}]{}
+
+% Count number. given half life, work out mass
+% Given masses of before and after, work out kinetic energy
+% given absorption coefficient, work out expected distance
+% compare to measured distance; why are they different?
+% Could instead do that in reverse, work out mass of alpha particle?
+
+
+\end{document}

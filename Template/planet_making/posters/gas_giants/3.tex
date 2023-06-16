@@ -1,0 +1,35 @@
+\documentclass{standalone}
+
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{calc, positioning, decorations, decorations.pathmorphing, arrows, arrows.meta}
+\def\packagedir{../../../packages}
+\input{\packagedir/themes/ncl.tex}
+
+\begin{document}
+% \pagecolor{BackgroundColour}
+\begin{tikzpicture}[line join = round, line cap = round, line width = 2mm]
+    \path[
+        draw = ForegroundColour, 
+        fill = Red_3, 
+        % fill opacity = 0.3, 
+        shift = {(3, 0)}, 
+        rotate = -90,
+        decoration = {
+            coil, 
+            aspect = 0, 
+            amplitude = 2mm, 
+            segment length = 5mm
+        },
+        scale = 0.8
+    ]
+    (-20:6.5 |- 0, -4) decorate {-- (-20:6.5)} arc (-20:200:6.5) decorate{-- (200:6.5 |- 0, -4)};
+    \node at (-4.4,0.3) {\includegraphics[width = 8cm]{../scribble.png}};
+    \node[rotate = 104] at (-3.8,-0.8) {\includegraphics[width = 8cm]{../scribble.png}};
+    \node[rotate = 33] at (-4,0) {\includegraphics[width = 8cm]{../scribble.png}};
+    \path[draw = white, line width = 6mm, -{>[length = 1.2cm, width = 2.2cm]}] (-4, 0) -- (2, 0);
+    \path[draw = Blue, line width = 4mm, -{>[length = 1cm, width = 2cm]}, shorten > = 1mm] (-4, 0) -- (2, 0);
+    \pgfresetboundingbox
+    \useasboundingbox (-10, 12.5) rectangle (10, -12.5);
+\end{tikzpicture}
+\end{document}

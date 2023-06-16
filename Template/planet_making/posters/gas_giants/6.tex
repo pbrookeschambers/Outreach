@@ -1,0 +1,32 @@
+\documentclass{standalone}
+
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{calc, positioning, decorations, decorations.pathmorphing}
+\def\packagedir{../../../packages}
+\input{\packagedir/themes/ncl.tex}
+
+\begin{document}
+% \pagecolor{BackgroundColour}
+\begin{tikzpicture}[line join = round, line cap = round, line width = 2mm]
+    \path[draw = ForegroundColour, fill = Red_3, rotate = 90, shift = {(-2, 0)}]
+                                                   (10:6) arc (10:350:6);
+    \path[
+        draw = ForegroundColour, 
+        fill = Red_3, 
+        fill opacity = 0.5, 
+        shift = {(0, 1)}, 
+        decoration = {
+            coil, 
+            aspect = 0, 
+            amplitude = 2mm, 
+            segment length = 5mm
+        }
+    ]
+    (0:6.5 |- 0, -2) decorate {-- (0:6.5)} arc (0:180:6.5) decorate{-- (180:6.5 |- 0, -2)};
+    \path[line width = 4mm, draw = Accent1, ->] ($(10:7.5) + (0, 1)$) to[out = 270, in = 45] ($(-45: 7.5) + (0, -2)$);
+    \path[line width = 4mm, draw = Accent1, ->, xscale = -1] ($(10:7.5) + (0, 1)$) to[out = 270, in = 45] ($(-45: 7.5) + (0, -2)$);
+    \pgfresetboundingbox
+    \useasboundingbox (-10, 12.5) rectangle (10, -12.5);
+\end{tikzpicture}
+\end{document}

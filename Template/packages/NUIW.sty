@@ -119,3 +119,65 @@
 
 % #endregion Title page
 
+% #region global flags
+
+\newcommand\SetStudentOnly{
+    \studenttrue
+    \instructorfalse
+    \trackingfalse
+}
+
+\newcommand\SetInstructorOnly{
+    \studentfalse
+    \instructortrue
+    \trackingfalse
+}
+
+
+
+% #endregion global flags
+
+
+
+% #region Tasks
+
+\newcounter{taskcounter}
+\setcounter{taskcounter}{0}
+\newcounter{subtaskcounter}[taskcounter]
+\setcounter{subtaskcounter}{0}
+\newcounter{Stepcounter}[taskcounter] % Capital S to avoid conflict with stepcounter
+\setcounter{Stepcounter}{0}
+
+\newcommand{\task}[1]{
+    \def\tmp{#1}
+    \stepcounter{taskcounter}
+    \section{
+        Task \thetaskcounter%
+        \ifx\tmp\empty%
+        \else: #1
+        \fi
+    }
+}
+
+\newcommand{\subtask}[1]{
+    \def\tmp{#1}
+    \stepcounter{subtaskcounter}
+    \subsection{
+        Task \thetaskcounter.\alph{subtaskcounter}%
+        \ifx\tmp\empty%
+        \else: #1
+        \fi
+    }
+}
+
+\newcommand{\Step}[1]{
+    \def\tmp{#1}
+    \stepcounter{Stepcounter}
+    {\color{ForegroundColour}\bfseries\large Step \theStepcounter%
+        \ifx\tmp\empty%
+        \else, #1
+        \fi:~
+    }
+}
+
+% #endregion Tasks

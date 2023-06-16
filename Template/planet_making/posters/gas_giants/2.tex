@@ -1,0 +1,55 @@
+\documentclass{standalone}
+
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{calc, positioning, decorations, decorations.pathmorphing}
+\def\packagedir{../../../packages}
+\input{\packagedir/themes/ncl.tex}
+
+\begin{document}
+% \pagecolor{BackgroundColour}
+\begin{tikzpicture}[line join = round, line cap = round, line width = 2mm]%, decoration = {random steps, segment length = 3mm, amplitude = 0.5mm}]
+    
+    \path[decorate, draw = ForegroundColour, fill = Red_3, shift = {(-3, -5)}, rotate = -35]
+                                                   (10:5 and 3) arc (10:350:5 and 3);
+    \path[decorate, draw = ForegroundColour, fill = Red_3, shift = {(0, -9)}, rotate = 15]  
+                                                    (15 :5 and 3 -| 8.5, 0) 
+                                                -- (10 :5 and 3 -| 8  , 0) 
+                                                % -- (10 :6 -| 7.5, 0) 
+                                                % -- (350:6 -| 6.5, 0) 
+                                                -- (10:5 and 3          ) 
+                                                % arc (10:350:6      ) 
+                                                -- (350:5 and 3)
+                                                % -- (350 :6 -| 6.5, 0)
+                                                % -- (350:6 -| 7.5, 0)
+                                                -- (350:5 and 3 -| 8  , 0) 
+                                                -- (345:5 and 3 -| 8.5, 0) 
+                                                -- cycle;
+    \path[decorate, draw = ForegroundColour, fill = Red_3, rotate = 35, shift = {(2, 2)}]  
+                                                   (15 :5 and 3 -| 8.5, 0) 
+                                                -- (10 :5 and 3 -| 8  , 0) 
+                                                % -- (10 :6 -| 7.5, 0) 
+                                                % -- (350:6 -| 6.5, 0) 
+                                                -- (10:5 and 3          ) 
+                                                % arc (10:350:6      ) 
+                                                -- (350:5 and 3)
+                                                % -- (350 :6 -| 6.5, 0)
+                                                % -- (350:6 -| 7.5, 0)
+                                                -- (350:5 and 3 -| 8  , 0) 
+                                                -- (345:5 and 3 -| 8.5, 0) 
+                                                -- cycle;
+    \path[decorate, draw = ForegroundColour, fill = Red_3, rotate = 10, shift = {(-1, 1)}]
+                                                   (10:5 and 3) arc (10:350:5 and 3);
+
+    \pgfmathsetmacro\bladewidth{0.4}
+    \begin{scope}[scale = 0.75, shift = {(3, 8)}, rotate = -45]
+        \path[decorate, draw = ForegroundColour, fill = ForegroundColour_5] (-1, -\bladewidth) to (8, -\bladewidth) arc (0:90:{2*\bladewidth*1cm}) -- (-1, \bladewidth) -- cycle;
+        \path[decorate, draw = ForegroundColour, fill = ForegroundColour_5, yscale = -1, rotate = 35] (-1, -\bladewidth) to (8, -\bladewidth) arc (0:90:{2*\bladewidth*1cm}) -- (-1, \bladewidth) -- cycle;
+        \path[decorate, fill = ForegroundColour] (0, 0) circle ({0.5*\bladewidth*1cm});
+        \path[decorate, draw = ForegroundColour, fill = Accent3] (-1, -\bladewidth) to[out = 180, in = 0] (-6, -3) arc (270:90:2 and 1.7) -- (-1, \bladewidth) -- cycle (-6, {-1.5cm + 0.5 * \bladewidth * 1cm}) circle (1.25 and 1.0625);
+        \path[decorate, draw = ForegroundColour, fill = Accent3, yscale = -1, rotate = 35] (-1, -\bladewidth) to[out = 180, in = 0] (-6, -3) arc (270:90:2 and 1.7) -- (-1, \bladewidth) -- cycle (-6, {-1.5cm + 0.5 * \bladewidth * 1cm}) circle (1.25 and 1.0625);
+    \end{scope} 
+    \pgfresetboundingbox
+    \useasboundingbox (-10, 12.5) rectangle (10, -12.5);
+\end{tikzpicture}
+\end{document}

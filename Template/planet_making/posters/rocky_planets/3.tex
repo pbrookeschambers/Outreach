@@ -1,0 +1,28 @@
+\documentclass{standalone}
+
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{calc, positioning, decorations, decorations.pathmorphing}
+\def\packagedir{../../../packages}
+\input{\packagedir/themes/ncl.tex}
+
+\begin{document}
+% \pagecolor{BackgroundColour}
+\begin{tikzpicture}[line join = round, line cap = round, line width = 2mm]
+
+    \path[draw = ForegroundColour, fill = Red_3, rotate = 10, shift = {(-1, 1)}]  
+                                                   (20 :6 and 5 -| 8.5, 0) 
+                                                -- (15 :6 and 5 -| 8  , 0) 
+                                                -- (15 :6 and 5 -| 7.5, 0) 
+                                                -- (345:6 and 5 -| 6.5, 0) 
+                                                -- (345:6 and 5) 
+                                                arc (345:15:6 and 5) 
+                                                -- (15 :6 and 5 -| 6.5, 0)
+                                                -- (345:6 and 5 -| 7.5, 0)
+                                                -- (345:6 and 5 -| 8  , 0) 
+                                                -- (340:6 and 5 -| 8.5, 0) 
+                                                -- cycle;
+    \pgfresetboundingbox
+    \useasboundingbox (-10, 12.5) rectangle (10, -12.5);
+\end{tikzpicture}
+\end{document}

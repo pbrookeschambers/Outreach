@@ -118,13 +118,13 @@
 \else
 	% Extended duration
 	\pgfmathsetmacro{\de}{#1} % in minutes
-	\pgfmathsetmacro{\deangle}{90 - \de*360/60}
+	\pgfmathsetmacro{\deangle}{90 - \de * 6} % * 360 / 60 --> * 6
 	\path[extended duration] (0,0) -- (90:\innerradiusextended) arc (90:\deangle:\innerradiusextended) -- cycle;
 \fi
 
 % Normal duration
 \pgfmathsetmacro{\d}{#2} % in minutes
-\pgfmathsetmacro{\dangle}{90 - \d*360/60}
+\pgfmathsetmacro{\dangle}{90 - \d * 6} % * 360 / 60 --> * 6
 \path[duration] (0,0) -- (90:\innerradius) arc (90:\dangle:\innerradius) -- cycle;
 
 % Hands

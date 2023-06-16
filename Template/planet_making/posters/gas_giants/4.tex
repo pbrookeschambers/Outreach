@@ -1,0 +1,22 @@
+\documentclass{standalone}
+
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{calc, positioning, decorations, decorations.pathmorphing}
+\def\packagedir{../../../packages}
+\input{\packagedir/themes/ncl.tex}
+
+\begin{document}
+% \pagecolor{BackgroundColour}
+\begin{tikzpicture}[line join = round, line cap = round, line width = 2mm]
+    \path[draw = ForegroundColour, fill = Green_3, shift = {(4, {4 * (0.15)})}, rotate = 45, scale = 1.15, dash pattern = on 2\pgflinewidth off 3\pgflinewidth, opacity = 0.8]
+                                                    (20:6) arc (20:340:6);
+    \path[draw = ForegroundColour, fill = Red_3, rotate = 90, shift = {(-2, 0)}, scale = 0.8]
+                                                   (20:6) arc (20:340:6);
+    \path[draw = ForegroundColour, fill = Blue_3, shift = {(-4, -4)}, rotate = 135, scale = 0.5, dash pattern = on 2\pgflinewidth off 3\pgflinewidth, opacity = 0.8]
+                                                    (20:6) arc (20:340:6);
+
+    \pgfresetboundingbox
+    \useasboundingbox (-8, 12.5) rectangle (12, -12.5);
+\end{tikzpicture}
+\end{document}

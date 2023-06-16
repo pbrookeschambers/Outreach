@@ -6,34 +6,6 @@
 
 % #region responses
 
-\newtcolorbox{answerbox}[1][]{%
-    enhanced,
-    colback = white,
-    colframe= Accent1,
-    colupper = ForegroundColour,
-    before upper = {\setlength\parskip{1.5em}\setlength\parindent{17pt}\par}, % set the normal indent and paragraph skip
-    topsep at break = 1.5em,
-    bottomsep at break = 1em,
-    top = 1em, 
-    after = \par,
-    #1
-}
-
-\newcommand\answertext[2][10em]{
-    \def\tmp{#2}
-    \begin{answerbox}[height = #1] 
-        \ifx\tmp\empty%
-        \else%
-            \begin{instructoronly}
-                \textbf{Answer:} #2
-            \end{instructoronly}
-        \fi
-    \end{answerbox}
-}
-
-\newcommand\answertextlong[2][15em]{
-    \answertext[#1]{#2}
-}
 
 \newcommand\answerinline[1]{
     % This can end up nesting tikzpictures if called from inside a tikzpicture. This is not good.
@@ -57,7 +29,90 @@
         ] ($(char.text -| char.west) + (0, -1mm)$) -- ($(char.text -| char.east) + (0, -1mm)$);
     }
 }
+
+\newsavebox{\answersavebox}
+
+\newtcolorbox{answerbox}[1][]{%
+    enhanced,
+    colback = white,
+    colframe= Accent1,
+    colupper = ForegroundColour,
+    before upper = {\setlength\parskip{1.5em}\setlength\parindent{17pt}\par}, % set the normal indent and paragraph skip
+    topsep at break = 1.5em,
+    bottomsep at break = 1em,
+    top = -0.5em, 
+    bottom = 2.5em,
+    after = \par,
+    height plus = \textheight,
+    #1
+}
+
 \ExplSyntaxOn
+
+% height: height of the answer box (10em)
+% prompt: prompt to display to the student (e.g., "Answer:")
+% answer: the correct answer to the prompt
+% unit: the unit of the answer (e.g., "m")
+
+\keys_define:nn {answertext}{
+    height .dim_set:N = \l__answertext_height_dim,
+    prompt .tl_set:N = \l__answertext_prompt_tl,
+    answer .tl_set:N = \l__answertext_answer_tl,
+    unit .tl_set:N = \l__answertext_unit_tl,
+    height .initial:n = 0pt,
+    prompt .initial:n = {},
+    answer .initial:n = {},
+    unit .initial:n = {},
+}
+
+
+\newcommand\answertext[2][]{
+    \group_begin:
+    \def\tmp{#2}
+
+    \keys_set:nn {answertext} {#1}
+    % save the prompt to the box. Avoids nested tikzpictures, keeping correct placement
+    \savebox{\answersavebox}{% if the prompt was given, print it
+    \color{ForegroundColour}
+    \tl_if_empty:NF \l__answertext_prompt_tl {
+        \l__answertext_prompt_tl
+    }
+    % if the answer was given, print it
+    \tl_if_empty:NF \l__answertext_answer_tl {
+        \answerinline{\l__answertext_answer_tl}
+    }
+    % if the prompt was given, but no answer, print a line
+    \tl_if_empty:NF \l__answertext_prompt_tl {
+        \tl_if_empty:NTF \l__answertext_answer_tl {
+            \answerinline{\makebox[10ex][s]{}}
+        }{
+        }
+    }
+    % if the unit was given, print it
+    \tl_if_empty:NF \l__answertext_unit_tl {
+        \l__answertext_unit_tl
+    }
+    }
+
+    % if height wasn't given (i.e., it's still 0pt), set it to 10em
+    \dim_compare:nTF {\l__answertext_height_dim = 0pt} {
+        \dim_set:Nn \l__answertext_height_dim {10em}
+    }{}
+    \begin{answerbox}[height = \l__answertext_height_dim, overlay = {
+        \node[above~left=1.5em] at (frame.south~east) {\usebox{\answersavebox}};
+    }]
+        \ifx\tmp\empty%
+        \else%
+            \begin{instructoronly}
+                \textbf{Answer:}~#2
+            \end{instructoronly}
+        \fi
+    \end{answerbox}
+
+    \group_end:
+}
+
+
 
 % #region table
 
