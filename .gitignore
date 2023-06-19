@@ -8,3 +8,6 @@ testing
 Template/test
 Template/_compile.py
 Sample
+Template/__pycache__
+Template/planet_making/posters/random_scribble.ipynb
+Template/planet_making/posters/random_scribble.png

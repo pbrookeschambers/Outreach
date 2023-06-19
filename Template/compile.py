@@ -455,6 +455,7 @@ def prune(directory: Path, verbose: bool = False):
                 # student and instructor, either both with or both without extensions
                 for file in files:
                     file.rename(directory / file.name.replace("_extension", ""))
+    
 
 
 def main():

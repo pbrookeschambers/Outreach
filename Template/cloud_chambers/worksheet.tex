@@ -6,9 +6,17 @@
 
 \newcommand{\important}[1]{\textbf{#1}}
 
+\newcommand{\isotope}[3][]{\tikz[every node/.style = {inner sep = 0pt}]{
+    \node (isotope) {#2};
+    \node[left] (mass) at (isotope.north west) {\scriptsize#3};
+    \node[left] at (isotope.south west) {\scriptsize#1};
+    \pgfresetboundingbox
+    \useasboundingbox (mass.west |- isotope.north) rectangle (isotope.east |- isotope.base);
+}}
+
 \begin{document}
 
-\task{}
+% \task{}
 
 \question{}
 Watch carefully for the trails of cloud left by the alpha particles. You should
@@ -18,43 +26,218 @@ see that they are fairly short, around \SI{5}{\centi\metre} long. Why do they st
 
 \question{}
 
-The number of radioactive nuclei remaining in a sample decreases exponentially. If we know the initial number of atoms $N_0$, we can work out the number remaining after a given time $t$ using the equation
+The number of radioactive nuclei remaining in a sample decreases exponentially.
+If we know the initial number of atoms $N_0$, we can work out the number
+remaining after a given time $t$ using the equation
 \begin{equation*}
     N(t) = N_0 e^{-\lambda t}\,,
 \end{equation*}
-where $\lambda$ is the \important{decay constant}. This is related to the \important{half life} $t_{\frac{1}{2}}$ (the time it takes for the number of particles to halve) by the equation
+where $\lambda$ is the \important{decay constant}. This is related to the
+\important{half life} $t_{\frac{1}{2}}$ (the time it takes for the number of
+particles to halve) by the equation
 \begin{equation*}
     \lambda = \frac{\ln (2)}{t_{\frac{1}{2}}}\,.
 \end{equation*}
 
-We can define the \important{activity} as the number of particles decaying per second, or the rate of change of the number of particles. This is given by
+We can define the \important{activity} as the number of particles decaying per
+second, or the rate of change of the number of particles. This is given by
 \begin{equation*}
     A = -\frac{dN}{dt} = \lambda N\,.
 \end{equation*}
 
-Watch your cloud chamber for $10$ seconds, and count the number of trails you see in this time. Repeat this three times, and fill in the table below:
+Watch your cloud chamber for $10$ seconds, and count the number of trails you
+see in this time. Repeat this three times, and fill in the table below:
 
 \answertable{rows = 3, columns = 2, headers = {Time (s), Number of Trails}}
 
-Average: \answerinline{some number}
+Average: \answerinline{$25$ to $30$}
 
-What is the activity of the source? $A = $ \answerinline{some number / 10} \si{\per\second}
+What is the activity of the source? $A = $ \answerinline{$\sim 2.5$}
+\si{\per\second}
+
+\begin{instructoronly}
+    \color{blue}\textit{Expect a lot of variation for the activity between groups.}
+\end{instructoronly}
 
 \question{}
 
-The half-life of Americium-241 is \SI{432.2}{\year}. How many atoms of Americium-241 are there in your source? 
+The half-life of thorium-232 (\isotope{Th}{232}) is \SI{1.4d10}{\year}. How many atoms of
+\isotope{Th}{232} are there in your source? There are \SI{3.15576d7}{\second} in a
+year.
 
-\answertext[prompt = {$N = $}, answer ={ $\sim10^{25}$}]{}
+\answertext[prompt = {$N = $}, answer ={ $1.59\times10^{18}$}]{
+    \begin{equation*}
+        A = \frac{\ln(2) N}{t_{\frac{1}{2}}} \Rightarrow N = \frac{A t_{\frac{1}{2}}}{\ln(2)} = \frac{2.5 \times 1.4\times10^{10} * 3.15576\times10^{7}}{\ln(2)} \approx 1.59\times10^{18}
+    \end{equation*}
+}
 
-The atomic mass of Americium-241 is \SI{241.057}{\atomicmassunit}. What is the mass of your source? (you may use \SI{1}{\atomicmassunit} = \SI{1.66e-27}{\kilo\gram}, $N_A = \SI{6.02e23}{\per\mole}$)
+The atomic mass of \isotope{Th}{232} is \SI{232.038}{\atomicmassunit}. What is the
+mass of your source? (you may use \SI{1}{\atomicmassunit} =
+\SI{1.66e-27}{\kilo\gram}, $N_A = \SI{6.02e23}{\per\mole}$)
 
-\answertext[prompt = {$m = $}, answer = {$\sim 1$}, unit = \si{\gram}]{}
+\answertext[prompt = {$m = $}, answer = {$0.000614$}, unit = \si{\gram}]{
+    \begin{equation}
+        m = N \times m_{atomic} \times 1.66\times10^{-27} = 1.59\times10^{18} \times 232.038 \times 1.66\times10^{-27} \approx 0.000614
+    \end{equation}
+}
 
-% Count number. given half life, work out mass
-% Given masses of before and after, work out kinetic energy
-% given absorption coefficient, work out expected distance
-% compare to measured distance; why are they different?
-% Could instead do that in reverse, work out mass of alpha particle?
 
+We already know that alpha particles produced near the centre of the source
+don't have as much kinetic energy by the time they leave the source. In fact,
+much of the alpha particles produced near the centre will never leave the
+sample. The rod is \SI{2}{\milli\meter} in diameter. Assuming that we only see
+alpha particles from the outermost \SI{22}{\micro\meter} of the rod, adjust
+your answer to the previous question to account for this.
+
+\answertext[prompt = {$m = $}, answer = {$\sim 0.25$}, unit = \si{\gram}]{
+    \color{blue}Note that this is not correct; an incorrect assumption has been made which is addressed in the extension task.\normalcolor
+    Let $R = \SI{1}{\milli\meter}$, $r = \SI{0.05}{\milli\meter}$, $L = \SI{175}{\milli\meter}$ is the length of the rod.
+    \begin{equation}
+        V_{active} = \pi r^2 L\,,\quad V_{total} = \pi R^2 L\,,\quad \Rightarrow \frac{V_{active}}{V_{total}} = \frac{r^2}{R^2} = \frac{0.022^2}{1^2} = 0.000484
+    \end{equation}
+    Therefore, the total mass is $m_{total} = \frac{m}{0.000484} \approx \SI{1.27}{\gram}$.
+}
+
+The total mass of the rod is \SI{10.5}{\gram} (it is mostly tungsten, a very dense metal). What percentage of the rod is \isotope{Th}{232}? 
+
+\answerinline{$\sim 12.1$}\% \isotope{Th}{232}.
+
+\extension
+
+\question{}
+
+We have so far assumed that all $\alpha$ particles observed have come from the decay of \isotope{Th}{232} to \isotope{Ra}{228}. However, \isotope{Ra}{228} is also unstable, and itself decays into \isotope{Ac}{228}. The full decay chain is shown in figure \ref{figure:decay-chain} below.
+
+\ExplSyntaxOn
+
+\keys_define:nn {isotope} {
+    element .tl_set:N = \l_isotope_element_tl,
+    element .value_required:n = true,
+    mass .int_set:N = \l_isotope_mass_int,
+    mass .value_required:n = true,
+    atomic~number .int_set:N = \l_isotope_atomic_number_int,
+    atomic~number .value_required:n = true,
+    half~life .tl_set:N = \l_isotope_half_life_tl,
+    half~life .value_required:n = true,
+    column .int_set:N = \l_isotope_column_int,
+    column .initial:n = 0,
+    color .tl_set:N = \l_isotope_color_tl,
+    color .initial:n = BackgroundColour,
+    name .tl_set:N = \l_isotope_name_tl,
+    name .initial:n = {},
+    background~color .tl_set:N = \l_isotope_background_color_tl,
+    background~color .initial:n = {},
+}
+\pgfmathsetmacro{\nodewidth}{1.5}
+\pgfmathsetmacro{\nodeheight}{3}
+\newcommand{\isotopenode}[1]{
+    \group_begin:
+
+    \keys_set:nn {isotope} {#1}
+    % if the name is empty, set it to element_name-element_mass
+    \tl_if_empty:NTF \l_isotope_name_tl {
+        \tl_set:Nx \l_isotope_name_tl {\l_isotope_element_tl _\fp_to_decimal:n{\l_isotope_mass_int}}
+    }{}
+    \tl_if_empty:NTF \l_isotope_background_color_tl {
+        \tl_set:Nx \l_isotope_background_color_tl {\l_isotope_color_tl _5}
+    }{}
+    \node[isotope, fill = \l_isotope_background_color_tl, below~right] (\l_isotope_name_tl) at ({\fp_to_decimal:n{\l_isotope_column_int} * \nodewidth * 1.25cm}, {\fp_to_decimal:n{\l_isotope_atomic_number_int - 81} * \nodeheight * 1em}) {};
+    \node[\l_isotope_color_tl, inner~sep = 0pt, below = 0.5em] (symbol) at (\l_isotope_name_tl.north) {\bfseries\l_isotope_element_tl};
+    \node[left = 0pt, inner~sep = 0pt, \l_isotope_color_tl] at (symbol.north~west) {\tiny\bfseries\fp_to_decimal:n{\l_isotope_mass_int}};
+    \node[left = 0pt, inner~sep = 0pt, \l_isotope_color_tl] at (symbol.south~west) {\tiny\bfseries\fp_to_decimal:n{\l_isotope_atomic_number_int}};
+    \node[above = 0.5em, inner~sep = 0pt, ForegroundColour, align = center, scale = 0.9] at (\l_isotope_name_tl.south) {\scriptsize\bfseries\l_isotope_half_life_tl};
+    \group_end:
+}
+
+\ExplSyntaxOff
+
+\begin{figure}[H]
+    \centering
+\pgfdeclarelayer{background}
+\pgfsetlayers{background, main}
+
+\begin{tikzpicture}[
+    isotope/.style = { 
+        rectangle, 
+        rounded corners = 0.5em, 
+        inner sep = 0pt, 
+        minimum width = {\nodewidth * 1cm}, 
+        minimum height = {\nodeheight * 1em}
+    },
+    decay/.style = {
+        -{Latex},
+        thick,
+        Blue
+    }
+]
+
+    \isotopenode{element = {Th}, mass = 232, atomic number = 90, half life = {\SI{1.4d10}{\year}}, color = Accent1}
+    \isotopenode{element = {Ra}, mass = 228, atomic number = 88, half life = {\SI{5.7}{\year}}, color = Accent2}
+    \isotopenode{element = {Ac}, mass = 228, atomic number = 89, half life = {\SI{6.1}{\hour}}, color = Accent10, column = 1}
+    \isotopenode{element = {Th}, mass = 228, atomic number = 90, half life = {\SI{1.9}{\year}}, color = Accent1, column = 2}
+    \isotopenode{element = {Ra}, mass = 224, atomic number = 88, half life = {\SI{3.6}{\day}}, color = Accent2, column = 2}
+    \isotopenode{element = {Rn}, mass = 220, atomic number = 86, half life = {\SI{55}{\second}}, color = Accent4, column = 2}
+    \isotopenode{element = {Po}, mass = 216, atomic number = 84, half life = {\SI{0.14}{\second}}, color = Accent5, column = 2}
+    \isotopenode{element = {Pb}, mass = 212, atomic number = 82, half life = {\SI{10.6}{\hour}}, color = Accent6, column = 2}
+    \isotopenode{element = {Bi}, mass = 212, atomic number = 83, half life = {\SI{61}{\minute}}, color = Accent7, background color = Accent7_4, column = 3}
+    \isotopenode{element = {Po}, mass = 212, atomic number = 84, half life = {\SI{0.3}{\micro\second}}, color = Accent5, column = 4}
+    \isotopenode{element = {Pb}, mass = 208, atomic number = 82, half life = {Stable}, color = Accent6, column = 4}
+    \isotopenode{element = {Tl}, mass = 208, atomic number = 81, half life = {\SI{3.1}{\minute}}, color = Accent8, column = 3}
+    \draw[decay] (Th_232) -- (Ra_228) node[midway, left, Blue] {$\alpha$};
+    \draw[decay, Red] (Ra_228.east) -- (Ra_228.east -| Ac_228.south) node[midway, below, Red] {$\beta^-$} -- (Ac_228.south);
+    \draw[decay, Red] (Ac_228.north) -- (Ac_228.north |- Th_228.west) -- (Th_228.west) node[midway, above, Red] {$\beta^-$};
+    \draw[decay] (Th_228) -- (Ra_224) node[midway, right, Blue] {$\alpha$};
+    \draw[decay] (Ra_224) -- (Rn_220) node[midway, right, Blue] {$\alpha$};
+    \draw[decay] (Rn_220) -- (Po_216) node[midway, right, Blue] {$\alpha$};
+    \draw[decay] (Po_216) -- (Pb_212) node[midway, left, Blue] {$\alpha$};
+    \draw[decay, Red] (Pb_212.east) -- ($(Pb_212.east -| Bi_212.south)!0.5!(Pb_212.east -| Bi_212.south west)$) node[midway, above, Red] {$\beta^{-}$} -- ($(Bi_212.south)!0.5!(Bi_212.south west)$);
+    \draw[decay] ($(Bi_212.south)!0.5!(Bi_212.south east)$) -- ($(Tl_208.north)!0.5!(Tl_208.north east)$) node[midway, left, Blue] {$\alpha$};
+    \draw[decay, Red] (Tl_208.east) -- (Tl_208.east -| Pb_208.south) node[midway, below, Red] {$\beta^-$} -- (Pb_208.south);
+    \draw[decay, Red] (Bi_212.north) -- (Bi_212.north |- Po_212.west) -- (Po_212.west) node[midway, above, Red] {$\beta^-$};
+    \draw[decay] (Po_212) -- (Pb_208) node[midway, right, Blue] {$\alpha$};
+
+    \begin{pgfonlayer}{background}
+        % \foreach \y in {0, ..., 4} {
+        %     \fill[BackgroundColour_5] (current bounding box.west |- 0, {2 * \y * \nodeheight * 1em}) rectangle (current bounding box.east |- 0, {(2 * \y + 1) * \nodeheight * 1em});
+        % }
+        \foreach \y in {0, ..., 4} {
+            \fill[BackgroundColour] (current bounding box.west |- 0, {(2 * \y - 1) * \nodeheight * 1em}) rectangle (current bounding box.east |- 0, {(2 * \y) * \nodeheight * 1em});
+        }
+        \foreach \y/\n in {
+            1/Thorium,
+            2/Actinium,
+            3/Radium,
+            4/Francium
+        } {
+            \node[above left, ForegroundColour] at (current bounding box.east |- 0, {(9 - \y) * \nodeheight * 1em}) {\footnotesize\n};
+        }
+
+        \foreach \y/\n in {
+            5/Radon,
+            6/Astatine,
+            7/Polonium,
+            8/Bismuth,
+            9/Lead,
+            10/Thallium
+        } {
+            \node[above right, ForegroundColour] at (current bounding box.west |- 0, {(9 - \y) * \nodeheight * 1em}) {\footnotesize\n};
+        }
+    \end{pgfonlayer}
+
+\end{tikzpicture}
+
+\caption{The decay chain of \isotope{Th}{232}.}
+\label{figure:decay-chain}
+\end{figure}
+
+Because of the huge difference in half-life between \isotope{Th}{232} and all the other unstable isotopes, we can approximate this entire chain as one process, with a half life of \SI{1.4d10}{\year} which produces 6 $\alpha$ particles, one of which is due to the \isotope{Th}{232} to \isotope{Ra}{228} decay. (Bismuth has two possible decay paths, both of which produce one $\alpha$ particle.) In effect, this means that the real activity due to \isotope{Th}{232} is $\frac{1}{6}$ of the observed activity. With this knowledge, what is the actual mass of \isotope{Th}{232} in the sample? 
+
+{\color{Blue}\textbf{Hint:}} You do \textbf{not} need to re-do all the calculations. Just work out how the activity directly affects the mass.\clearpage
+
+\answertext[prompt = {$m = $}, unit = \si{\gram}, answer = {$0.211$}]{
+    Mass is directly proportional to activity, so $m_{actual} = \frac{1}{6}m \approx \frac{1.27}{6} = \SI{0.211}{\gram}$
+}
+
+This is about \answerinline{~$2.0$}\% of the sample.
 
 \end{document}

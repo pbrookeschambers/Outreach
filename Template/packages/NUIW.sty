@@ -58,6 +58,9 @@
 % #endregion Environments
 
 \newcommand\extension{
+    \iftracking
+        \extensionchangestrue
+    \fi
     \ifextension%
     \else%
     \end{document}%

@@ -52,7 +52,7 @@
         \seq_gput_right:Nn \g_curriculumn_links_list {{\color{Accent1}#1~|~}#2}%
     \fi
 }
-\ExplSyntaxOff
+% \ExplSyntaxOff
 
 
 % #endregion Lists
@@ -60,6 +60,82 @@
 % #endregion Parameters
 
 % #region Duration
+
+% \ExplSyntaxOn
+
+% \int_zero_new:N \l_minutes_int
+% \int_zero_new:N \l_hours_int
+
+\newcommand{\formattime}[1]{
+    % take a number of minutes and return as:
+    % - # min if less than 60
+    % - #:## if more than 60
+    \int_zero_new:N \l_minutes_int
+    \int_zero_new:N \l_hours_int
+
+    % if #1 contains : then split into hours and minutes
+    \regex_match:nnTF { : } {#1} {
+        \regex_split:nnN { : } {#1} \l_tmpa_seq
+        \int_set:Nn \l_hours_int { \seq_item:Nn \l_tmpa_seq {1} }
+        \int_set:Nn \l_minutes_int { \seq_item:Nn \l_tmpa_seq {2} }
+    } {
+        % in minutes. Could still be more than an hour
+        \int_compare:nNnTF {#1} < {60} {
+            \int_set:Nn \l_minutes_int {#1}
+            \int_set:Nn \l_hours_int {0}
+        }{
+            \int_set:Nn \l_minutes_int { \int_mod:nn {#1} {60} }
+            \int_set:Nn \l_hours_int { \int_div_truncate:nn {#1} {60} }
+        }
+    }
+%
+    \int_compare:nNnTF {\l_hours_int} = {0} {
+        \fp_to_decimal{\l_minutes_int}\,min
+    } {
+        \int_compare:nNnTF {\l_minutes_int} = {0} {
+            \fp_to_decimal:n{\l_hours_int}\,hr
+        } {
+            % make sure to 0-pad minutes if less than 10
+            \int_compare:nNnTF { \l_minutes_int } < {10} {
+                \fp_to_decimal:n{\l_hours_int}\,hr~\fp_to_decimal:n{\l_minutes_int}\,min
+                % \fp_to_decimal:n{\l_hours_int} : 0\fp_to_decimal:n{\l_minutes_int}
+            } {
+                \fp_to_decimal:n{\l_hours_int}\,hr~\fp_to_decimal:n{\l_minutes_int}\,min
+                % \fp_to_decimal:n{\l_hours_int} : \fp_to_decimal:n{\l_minutes_int}
+            }
+        }
+    }
+}
+
+\newcommand{\parsetime}[1]{
+    \int_zero_new:N \l_minutes_int%
+    \int_zero_new:N \l_hours_int%
+%
+    % if #1 contains : then split into hours and minutes
+    \regex_match:nnTF { : } {#1} {%
+        \regex_split:nnN { : } {#1} \l_tmpa_seq
+        \int_set:Nn \l_hours_int { \seq_item:Nn \l_tmpa_seq {1} }%
+        \int_set:Nn \l_minutes_int { \seq_item:Nn \l_tmpa_seq {2} }%
+    } {%
+        % in minutes. Could still be more than an hour%
+        \int_compare:nNnTF {#1} < {60} {%
+            \int_set:Nn \l_minutes_int {#1}%
+            \int_set:Nn \l_hours_int {0}%
+        }{%
+            \int_set:Nn \l_minutes_int { \int_mod:nn {#1} {60} }%
+            \int_set:Nn \l_hours_int { \int_div_truncate:nn {#1} {60} }%
+        }%
+    }%
+%%
+    \fp_to_decimal:n{\l_hours_int * 60 + \l_minutes_int}%
+}
+
+
+\ExplSyntaxOff
+
+
+
+
 \newcommand{\showDuration}[2][\@nil]{%
 \begin{tikzpicture}[
     lines/.style = {
@@ -100,7 +176,7 @@
 	label style/.style = {
 		Blue,
 		fill = white,
-		fill opacity = 0.5,
+		fill opacity = 0.7,
 		text opacity = 1,
 		inner sep = 0.5mm
 	}
@@ -115,16 +191,26 @@
 \def\tmp{#1}
 \ifx\tmp\@nnil % note the extra n!
 %
-\else
+\else%
 	% Extended duration
-	\pgfmathsetmacro{\de}{#1} % in minutes
-	\pgfmathsetmacro{\deangle}{90 - \de * 6} % * 360 / 60 --> * 6
+	\pgfmathsetmacro{\de}{#1} % in minutes% if the duration is more than 60 minutes:
+    \ifnum\de<60%
+        \pgfmathsetmacro{\deangle}{90 - \de*6} % *360 / 60
+    \else%
+        \path[extended duration, even odd rule] (0,0) circle (\innerradiusextended) circle (0.8*\innerradiusextended);
+        \pgfmathsetmacro{\deangle}{90 - (\de-60)*6} % *360 / 60
+    \fi%
 	\path[extended duration] (0,0) -- (90:\innerradiusextended) arc (90:\deangle:\innerradiusextended) -- cycle;
-\fi
+\fi%
 
 % Normal duration
 \pgfmathsetmacro{\d}{#2} % in minutes
-\pgfmathsetmacro{\dangle}{90 - \d * 6} % * 360 / 60 --> * 6
+\ifnum\d<60
+\pgfmathsetmacro{\dangle}{90 - \d*6} % *360 / 60
+\else
+\pgfmathsetmacro{\dangle}{90 - (\d-60)*6} % *360 / 60
+\path[duration, even odd rule] (0,0) circle (\innerradius) circle (\innerradiusextended);
+\fi
 \path[duration] (0,0) -- (90:\innerradius) arc (90:\dangle:\innerradius) -- cycle;
 
 % Hands
@@ -137,7 +223,7 @@
 \path[hand background] (0,0) -- (\dangle:\radius);
 \ifx\tmp\@nnil
 \else
-	\path[hand background] (0,0) -- (\deangle:\radius);
+	\path[hand background] (0,0) -- (\deangle:\handlengthextended);
 \fi
 
 % Extended duration
@@ -170,9 +256,9 @@
 % Labels
 \ifx\tmp\@nnil
 \else
-\node[anchor=\deangle-180, label style, align = center] (extended) at (\deangle:\radius + 0.25) {\de\,min};
+\node[anchor=\deangle-180, label style, align = center] (extended) at (\deangle:\radius + 0.25) {\formattime{\de}};
 \fi
-\node[anchor=\dangle-180, label style] (normal) at (\dangle:\radius + 0.25) {\d\,min};
+\node[anchor=\dangle-180, label style] (normal) at (\dangle:\radius + 0.25) {\formattime{\d}};
 \pgfresetboundingbox
 \useasboundingbox (-\radius, -\radius) rectangle (\radius, \radius);
 
