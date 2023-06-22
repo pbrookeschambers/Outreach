@@ -13,7 +13,7 @@ templates = {
 
 \title{{{title}}}
 %\description{{}}
-%\duration[]{{}} % [extension]{{core}}, in minutes
+%\duration[]{{}} % [extension]{{core}}, in minutes, or like 1h25
 %\stage{{...}}
 %\workswith{{...}}
 

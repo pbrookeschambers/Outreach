@@ -3,6 +3,14 @@
 \usepackage{/home/peter/Documents/outreach/Template/packages/NUInstructions}
 \usepackage{multicol}
 
+\newcommand{\isotope}[3][]{\tikz[every node/.style = {inner sep = 0pt}]{
+    \node (isotope) {#2};
+    \node[left] (mass) at (isotope.north west) {\scriptsize#3};
+    \node[left] at (isotope.south west) {\scriptsize#1};
+    \pgfresetboundingbox
+    \useasboundingbox (mass.west |- isotope.north) rectangle (isotope.east |- isotope.base);
+}}
+
 \begin{document}
 
 \section{Introduction}
@@ -92,10 +100,10 @@ be used near an open flame. It is also toxic; do not drink it, wear gloves, and
 always wash your hands after being in any lab. Make sure you wash your hands 
 before eating or drinking anything.}
 
-\Step{} Place the radioactive source containing thorium-232 on the centre of the
+\Step{} Place the radioactive source containing thorium-232 (\isotope{Th}{232}) on the centre of the
 metal plate, and place the ruler perpendicular to the source rod.
 
-\safety[Handling of radioactive Thorium-232]{thorium-232 is a radioactive 
+\safety[Handling of radioactive \isotope{Th}{232}]{\isotope{Th}{232} is a radioactive 
 substance, and should be handled with care. Wear gloves when handling it, do not 
 handle it unnecessarily, and do not touch it to your skin. Always wash your 
 hands after being in any lab. Make sure you wash your hands before eating or 

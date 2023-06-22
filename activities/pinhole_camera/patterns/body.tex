@@ -1,0 +1,188 @@
+\documentclass{article}
+\usepackage[margin = 1cm, a3paper, landscape]{geometry}
+\usepackage{tikz}
+
+
+\usetikzlibrary{calc, arrows, arrows.meta, intersections}
+
+
+\makeatletter
+%http://groups.google.com/group/comp.text.tex/msg/7e812e5d6e67fcc5
+\def\convertto#1#2{\strip@pt\dimexpr #2*65536/\number\dimexpr 1#1}
+\makeatother
+
+\pgfmathsetmacro\dimensionscale{1.5}
+
+\newcommand\displayunit{cm}
+\newcommand\dimension[3][above]{%
+    \path (#2) -- (#3) coordinate[sloped, pos = 0, #1 = 1cm] (a) coordinate[sloped, pos = 1, #1 = 1cm] (b);
+    \draw[dimension] let \p1 = ($(#2) - (#3)$), \n1 = {veclen(\x1, \y1)} in (a) -- (b) node[midway, sloped, scale = \dimensionscale, fill = white] {\convertto{\displayunit}{\n1}\,\displayunit};
+    \draw[red!50!black, dotted, very thick, shorten > = -0.5cm] (#2) -- (a);
+    \draw[red!50!black, dotted, very thick, shorten > = -0.5cm] (#3) -- (b); 
+}
+
+\newcommand\dimensionHorizAbove[3][above]{%
+    \path let \p1 = (#2), \p2 = (#3) in (\x1, {max(\y1, \y2)}) -- (\x2, {max(\y1, \y2)}) coordinate[sloped, pos = 0, #1 = 1cm] (a) coordinate[sloped, pos = 1, #1 = 1cm] (b);
+    \draw[dimension] let \p1 = ($(#2) - (#3)$) in (a) -- (b) node[midway, sloped, scale = \dimensionscale, fill = white] {\convertto{\displayunit}{\x1}\,\displayunit};
+    \draw[red!50!black, dotted, very thick, shorten > = -0.5cm] (#2) -- (a);
+    \draw[red!50!black, dotted, very thick, shorten > = -0.5cm] (#3) -- (b); 
+}
+
+\newcommand\dimensionHorizBelow[3][below]{%
+    \path let \p1 = (#2), \p2 = (#3) in (\x1, {min(\y1, \y2)}) -- (\x2, {min(\y1, \y2)}) coordinate[sloped, pos = 0, #1 = 1cm] (a) coordinate[sloped, pos = 1, #1 = 1cm] (b);
+    \draw[dimension] let \p1 = ($(#2) - (#3)$) in (a) -- (b) node[midway, sloped, scale = \dimensionscale, fill = white] {\convertto{\displayunit}{\x1}\,\displayunit};
+    \draw[red!50!black, dotted, very thick, shorten > = -0.5cm] (#2) -- (a);
+    \draw[red!50!black, dotted, very thick, shorten > = -0.5cm] (#3) -- (b); 
+}
+
+\newcommand\dimensionVertLeft[3][below]{%
+    \path let \p1 = (#2), \p2 = (#3) in ({min(\x1, \x2)}, \y1) -- ({min(\x1, \x2)}, \y2) coordinate[sloped, pos = 0, #1 = 1cm] (a) coordinate[sloped, pos = 1, #1 = 1cm] (b);
+    \draw[dimension] let \p1 = ($(#2) - (#3)$) in (a) -- (b) node[midway, sloped, scale = \dimensionscale, fill = white] {\convertto{\displayunit}{\y1}\,\displayunit};
+    \draw[red!50!black, dotted, very thick, shorten > = -0.5cm] (#2) -- (a);
+    \draw[red!50!black, dotted, very thick, shorten > = -0.5cm] (#3) -- (b); 
+}
+
+\newcommand\dimensionVertRight[3][above]{%
+    \path let \p1 = (#2), \p2 = (#3) in ({max(\x1, \x2)}, \y1) -- ({max(\x1, \x2)}, \y2) coordinate[sloped, pos = 0, #1 = 1cm] (a) coordinate[sloped, pos = 1, #1 = 1cm] (b);
+    \draw[dimension] let \p1 = ($(#2) - (#3)$) in (a) -- (b) node[midway, sloped, scale = \dimensionscale, fill = white] {\convertto{\displayunit}{\y1}\,\displayunit};
+    \draw[red!50!black, dotted, very thick, shorten > = -0.5cm] (#2) -- (a);
+    \draw[red!50!black, dotted, very thick, shorten > = -0.5cm] (#3) -- (b); 
+}
+
+
+\tikzset{
+    dimension/.style = {
+        red!50!black,
+        very thick,
+        dashed,
+        {Latex[width = 5mm, length = 8mm]}-{Latex[width = 5mm, length = 8mm]}
+    }
+}
+
+\begin{document}
+\pgfmathsetmacro{\width}{10}
+\pgfmathsetmacro{\height}{10}
+\pgfmathsetmacro{\depth}{15}
+\pgfmathsetmacro{\frontheight}{5}
+\pgfmathsetmacro{\frontwidth}{5}
+\pgfmathsetmacro{\backheight}{5}
+\pgfmathsetmacro{\backwidth}{5}
+\pgfmathsetmacro{\tablangle}{20}
+\pgfmathsetmacro{\tabwidth}{2}
+\begin{tikzpicture}[scale = 0.5]
+    \draw[blue] (0,0) rectangle ({2 * \width + 2 * \height}, \depth);
+    \draw[blue] (\width, 0) -- (\width, \depth);
+    \draw[blue] (\width + \height, 0) -- (\width + \height, \depth);
+    \draw[blue] (\width + \height + \width, 0) -- (\width + \height + \width, \depth);
+    \draw[blue] (0, 0) rectangle ({-\tabwidth}, \depth);
+    \draw[blue] (0, \depth) 
+                -- ($(0,\depth) + ({(\height - \frontheight) / 2 * tan(\tablangle)}, {(\height - \frontheight) / 2})$) 
+                -- ($(\width,\depth) + ({-(\height - \frontheight) / 2 * tan(\tablangle)}, {(\height - \frontheight) / 2})$) 
+                -- (\width, \depth);
+    \draw[blue] (\width, \depth) 
+                -- ($(\width,\depth) + ({(\width - \frontwidth) / 2 * tan(\tablangle)}, {(\width - \frontwidth) / 2})$) 
+                -- ($(\width + \height,\depth) + ({-(\width - \frontwidth) / 2 * tan(\tablangle)}, {(\width - \frontwidth) / 2})$) 
+                -- (\width + \height, \depth);
+    \draw[blue, xshift = {(\width+\height) * 1cm}] (0, \depth) 
+                -- ($(0,\depth) + ({(\height - \frontheight) / 2 * tan(\tablangle)}, {(\height - \frontheight) / 2})$) 
+                -- ($(\width,\depth) + ({-(\height - \frontheight) / 2 * tan(\tablangle)}, {(\height - \frontheight) / 2})$) 
+                -- (\width, \depth);
+    \draw[blue, xshift = {(\width+\height) * 1cm}] (\width, \depth) 
+                -- ($(\width,\depth) + ({(\width - \frontwidth) / 2 * tan(\tablangle)}, {(\width - \frontwidth) / 2})$) 
+                -- ($(\width + \height,\depth) + ({-(\width - \frontwidth) / 2 * tan(\tablangle)}, {(\width - \frontwidth) / 2})$) 
+                -- (\width + \height, \depth);
+    % Back
+    \draw[blue] (0, 0) 
+                -- ($(0,0) + ({(\height - \backheight) / 2 * tan(\tablangle)}, {-(\height - \backheight) / 2})$) 
+                -- ($(\width,0) + ({-(\height - \backheight) / 2 * tan(\tablangle)}, {-(\height - \backheight) / 2})$) 
+                -- (\width, 0);
+    \draw[blue] (\width, 0) 
+                -- ($(\width,0) + ({(\width - \backwidth) / 2 * tan(\tablangle)}, {-(\width - \backwidth) / 2})$) 
+                -- ($(\width + \height,0) + ({-(\width - \backwidth) / 2 * tan(\tablangle)}, {-(\width - \backwidth) / 2})$) 
+                -- (\width + \height, 0);
+    \draw[blue, xshift = {(\width+\height) * 1cm}] (0, 0) 
+                -- ($(0,0) + ({(\height - \backheight) / 2 * tan(\tablangle)}, {-(\height - \backheight) / 2})$) 
+                -- ($(\width,0) + ({-(\height - \backheight) / 2 * tan(\tablangle)}, {-(\height - \backheight) / 2})$) 
+                -- (\width, 0);
+    \draw[blue, xshift = {(\width+\height) * 1cm}] (\width, 0) 
+                -- ($(\width,0) + ({(\width - \backwidth) / 2 * tan(\tablangle)}, {-(\width - \backwidth) / 2})$) 
+                -- ($(\width + \height,0) + ({-(\width - \backwidth) / 2 * tan(\tablangle)}, {-(\width - \backwidth) / 2})$) 
+                -- (\width + \height, 0);
+    \dimension[below]{0, 0.85 * \depth}{\width, 0.85 * \depth}{a}
+    \dimension[below]{\width, 0.65 * \depth}{\width + \height, 0.65 * \depth}{a}
+    \dimension{\}
+
+\end{tikzpicture}
+
+\pgfmathsetmacro{\spacerwidth}{1.5}
+\pgfmathsetmacro{\lipwidth}{0.5}
+\pgfmathsetmacro{\holderwidth}{\spacerwidth + \lipwidth}
+\begin{tikzpicture}[scale = 0.5]
+    \draw[blue] (0,0) 
+    -- (\spacerwidth, 0) 
+    -- (\spacerwidth, {-\frontheight - \spacerwidth}) 
+    -- (\spacerwidth + \frontwidth, {-\frontheight - \spacerwidth})
+    -- (\spacerwidth + \frontwidth, 0)
+    -- ({2 * \spacerwidth + \frontwidth}, 0)
+    -- ({2 * \spacerwidth + \frontwidth}, {-\frontheight - 2 * \spacerwidth})
+    -- (0, {-\frontheight - 2 * \spacerwidth})
+    -- cycle;
+    \draw[green!50!black, dashed, thick] (\spacerwidth, -\spacerwidth) rectangle ++ (\frontwidth, -\frontheight);
+\end{tikzpicture}
+\begin{tikzpicture}[scale = 0.5]
+    \draw[blue] (0,0)
+                -- (\holderwidth, 0)
+                -- (\holderwidth, {-\frontheight - \spacerwidth + \lipwidth})
+                -- (\holderwidth + \frontwidth - 2 * \lipwidth, {-\frontheight - \spacerwidth + \lipwidth})
+                -- (\holderwidth + \frontwidth - 2 * \lipwidth, 0)
+                -- ({2 * \holderwidth + \frontwidth - 2 * \lipwidth}, 0)
+                -- ({2 * \holderwidth + \frontwidth - 2 * \lipwidth}, {-\frontheight - 2 * \spacerwidth})
+                -- (0, {-\frontheight - 2 * \spacerwidth })
+                -- cycle;
+    \draw[green!50!black, dashed, thick] (\spacerwidth, -\spacerwidth) rectangle ++ (\frontwidth, -\frontheight);
+\end{tikzpicture}
+
+\begin{tikzpicture}[scale = 0.5]
+    \draw[blue] (0,0) 
+                -- (\spacerwidth, 0) 
+                -- (\spacerwidth, {-\backheight - \spacerwidth}) 
+                -- (\spacerwidth + \backwidth, {-\backheight - \spacerwidth})
+                -- (\spacerwidth + \backwidth, 0)
+                -- ({2 * \spacerwidth + \backwidth}, 0)
+                -- ({2 * \spacerwidth + \backwidth}, {-\backheight - 2 * \spacerwidth})
+                -- (0, {-\backheight - 2 * \spacerwidth})
+                -- cycle;
+    \draw[green!50!black, dashed, thick] (\spacerwidth, -\spacerwidth) rectangle ++ (\backwidth, -\backheight);
+\end{tikzpicture}
+\begin{tikzpicture}[scale = 0.5]
+    \draw[blue] (0,0)
+                -- (\holderwidth, 0)
+                -- (\holderwidth, {-\backheight - \spacerwidth + \lipwidth})
+                -- (\holderwidth + \backwidth - 2 * \lipwidth, {-\backheight - \spacerwidth + \lipwidth})
+                -- (\holderwidth + \backwidth - 2 * \lipwidth, 0)
+                -- ({2 * \holderwidth + \backwidth - 2 * \lipwidth}, 0)
+                -- ({2 * \holderwidth + \backwidth - 2 * \lipwidth}, {-\backheight - 2 * \spacerwidth})
+                -- (0, {-\backheight - 2 * \spacerwidth })
+                -- cycle;
+    \draw[green!50!black, dashed, thick] (\spacerwidth, -\spacerwidth) rectangle ++ (\backwidth, -\backheight);
+\end{tikzpicture}
+
+\pgfmathsetmacro\hoodwidth{\backwidth + \spacerwidth * 2}
+\pgfmathsetmacro\hoodheight{\backheight + \spacerwidth * 2}
+\pgfmathsetmacro\hoodmindepth{0.75 * \backheight}
+\pgfmathsetmacro\hooddepth{1.5 * \backheight}
+\begin{tikzpicture}[scale = 0.5]
+    \draw[blue] (0,0) -- (\hoodwidth, 0) -- (\hoodwidth, \hooddepth) -- (0, \hoodmindepth) -- cycle;
+    \draw[blue, xshift = {\hoodwidth * 1cm}] (0, 0) rectangle (\hoodheight, \hooddepth);
+    \draw[blue, xshift = {(\hoodwidth + \hoodheight) * 1cm}] (0, 0) -- (0, \hooddepth) -- (\hoodwidth, \hoodmindepth) -- (\hoodwidth, 0) -- cycle;
+    \draw[blue, xshift = {(2 * \hoodwidth + \hoodheight) * 1cm}] (0,0) rectangle (\hoodheight, \hoodmindepth);
+    % \foreach\x/\w in {0/\hoodwidth, \hoodwidth/\hoodheight,{ \hoodwidth + \hoodheight}/\hoodwidth, {2 * \hoodwidth + \hoodheight}/\hoodheight} {
+    %     \draw[blue, xshift = {\x * 1cm}] (0,0) rectangle (\w, -\tabwidth);
+    % }
+    \draw[blue] (0, 0) rectangle (\hoodwidth, -\tabwidth);
+    \draw[blue, xshift = {\hoodwidth  * 1cm}] (0, 0) rectangle (\hoodheight, -\tabwidth);
+    \draw[blue, xshift = {(\hoodwidth + \hoodheight) * 1cm}] (0, 0) rectangle (\hoodwidth, -\tabwidth);
+    \draw[blue, xshift = {(2 * \hoodwidth + \hoodheight) * 1cm}] (0, 0) rectangle (\hoodheight, -\tabwidth);
+    \draw[blue] (0, 0) rectangle (-\tabwidth, \hoodmindepth);
+\end{tikzpicture}
+\end{document}

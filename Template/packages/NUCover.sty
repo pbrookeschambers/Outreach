@@ -69,28 +69,20 @@
 \newcommand{\formattime}[1]{
     % take a number of minutes and return as:
     % - # min if less than 60
-    % - #:## if more than 60
+    % - # hr # min if more than 60
     \int_zero_new:N \l_minutes_int
     \int_zero_new:N \l_hours_int
 
-    % if #1 contains : then split into hours and minutes
-    \regex_match:nnTF { : } {#1} {
-        \regex_split:nnN { : } {#1} \l_tmpa_seq
-        \int_set:Nn \l_hours_int { \seq_item:Nn \l_tmpa_seq {1} }
-        \int_set:Nn \l_minutes_int { \seq_item:Nn \l_tmpa_seq {2} }
-    } {
-        % in minutes. Could still be more than an hour
-        \int_compare:nNnTF {#1} < {60} {
-            \int_set:Nn \l_minutes_int {#1}
-            \int_set:Nn \l_hours_int {0}
-        }{
-            \int_set:Nn \l_minutes_int { \int_mod:nn {#1} {60} }
-            \int_set:Nn \l_hours_int { \int_div_truncate:nn {#1} {60} }
-        }
+    \int_compare:nNnTF {#1} < {60} {
+        \int_set:Nn \l_minutes_int {#1}
+        \int_set:Nn \l_hours_int {0}
+    }{
+        \int_set:Nn \l_minutes_int { \int_mod:nn {#1} {60} }
+        \int_set:Nn \l_hours_int { \int_div_truncate:nn {#1} {60} }
     }
 %
     \int_compare:nNnTF {\l_hours_int} = {0} {
-        \fp_to_decimal{\l_minutes_int}\,min
+        \fp_to_decimal:n{\l_minutes_int}\,min
     } {
         \int_compare:nNnTF {\l_minutes_int} = {0} {
             \fp_to_decimal:n{\l_hours_int}\,hr
@@ -107,34 +99,47 @@
     }
 }
 
-\newcommand{\parsetime}[1]{
-    \int_zero_new:N \l_minutes_int%
-    \int_zero_new:N \l_hours_int%
-%
-    % if #1 contains : then split into hours and minutes
-    \regex_match:nnTF { : } {#1} {%
-        \regex_split:nnN { : } {#1} \l_tmpa_seq
-        \int_set:Nn \l_hours_int { \seq_item:Nn \l_tmpa_seq {1} }%
-        \int_set:Nn \l_minutes_int { \seq_item:Nn \l_tmpa_seq {2} }%
-    } {%
-        % in minutes. Could still be more than an hour%
-        \int_compare:nNnTF {#1} < {60} {%
-            \int_set:Nn \l_minutes_int {#1}%
-            \int_set:Nn \l_hours_int {0}%
-        }{%
-            \int_set:Nn \l_minutes_int { \int_mod:nn {#1} {60} }%
-            \int_set:Nn \l_hours_int { \int_div_truncate:nn {#1} {60} }%
-        }%
-    }%
-%%
-    \fp_to_decimal:n{\l_hours_int * 60 + \l_minutes_int}%
+\newcommand{\parsetime}[2]{
+    % takes a time, and a macro name, and sets the macro to the number of minutes (as a pgfmath macro)
+    % Time can be in the form:
+    % - # (minutes, can be more than 60)
+    % - #h (hours)
+    % - #h## (hours h minutes)
+    % Annoyingly, can't use a colon for *anything* in this, so `1h25` seems like the best alternative. Spaces are allowed but discouraged 
+    % Time *MUST* be expanded before being passed to this function. I.e, \parsetime{1h25}{\mytime} is fine, but \parsetime{\sometime}{\mytime} is not. It should be replaced with \expandafter\parsetime\expandafter{\sometime}{\mytime}. Same applies with parameters, such as #1
+    \int_zero_new:N \l_minutes_int
+    \int_zero_new:N \l_hours_int
+    \int_zero_new:N \l_total_minutes_int
+    % create a new empty sequence
+    \seq_clear_new:N \l_tmpa_seq
+    % split the input at the `h` character
+    \seq_set_split:Nnn \l_tmpa_seq {h} {#1}
+    \seq_pop_right:NNTF \l_tmpa_seq \l_tmpa_tl {
+        % if the token list is not empty, we had some number of minutes
+        \tl_if_empty:NTF \l_tmpa_tl {
+            % if the token list is blank, we had no minutes
+            \int_set:Nn \l_minutes_int {0}
+        }{
+            % otherwise, we had some number of minutes
+            \int_set:Nn \l_minutes_int {\l_tmpa_tl}
+        }
+    }{
+        % This should never happen. Set everything to 0
+        \int_set:Nn \l_minutes_int {0}
+        \int_set:Nn \l_hours_int {0}
+    }
+    \seq_pop_right:NNTF \l_tmpa_seq \l_tmpa_tl {
+        % We had some number of hours
+        \int_set:Nn \l_hours_int {\l_tmpa_tl}
+    }{
+        % We had no hours
+        \int_set:Nn \l_hours_int {0}
+    }
+    \int_set:Nn \l_total_minutes_int {\l_hours_int * 60 + \l_minutes_int}
+    \pgfmathsetmacro{#2}{\l_total_minutes_int}
 }
 
-
 \ExplSyntaxOff
-
-
-
 
 \newcommand{\showDuration}[2][\@nil]{%
 \begin{tikzpicture}[
@@ -193,7 +198,7 @@
 %
 \else%
 	% Extended duration
-	\pgfmathsetmacro{\de}{#1} % in minutes% if the duration is more than 60 minutes:
+	\expandafter\parsetime\expandafter{#1}{\de} % in minutes% if the duration is more than 60 minutes:
     \ifnum\de<60%
         \pgfmathsetmacro{\deangle}{90 - \de*6} % *360 / 60
     \else%
@@ -202,9 +207,8 @@
     \fi%
 	\path[extended duration] (0,0) -- (90:\innerradiusextended) arc (90:\deangle:\innerradiusextended) -- cycle;
 \fi%
-
 % Normal duration
-\pgfmathsetmacro{\d}{#2} % in minutes
+\expandafter\parsetime\expandafter{#2}{\d} % in minutes
 \ifnum\d<60
 \pgfmathsetmacro{\dangle}{90 - \d*6} % *360 / 60
 \else
@@ -256,9 +260,9 @@
 % Labels
 \ifx\tmp\@nnil
 \else
-\node[anchor=\deangle-180, label style, align = center] (extended) at (\deangle:\radius + 0.25) {\formattime{\de}};
+\node[anchor=\deangle-180, label style, align = center, text = Red_3] (extended) at (\deangle:\radius + 0.25 and 1.25*\radius + 0.25) {\formattime{\de}};
 \fi
-\node[anchor=\dangle-180, label style] (normal) at (\dangle:\radius + 0.25) {\formattime{\d}};
+\node[anchor=\dangle-180, label style] (normal) at (\dangle:\radius + 0.25 and 1.25*\radius + 0.25) {\formattime{\d}};
 \pgfresetboundingbox
 \useasboundingbox (-\radius, -\radius) rectangle (\radius, \radius);
 

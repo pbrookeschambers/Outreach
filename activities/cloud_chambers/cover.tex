@@ -2,6 +2,14 @@
 
 \usepackage{/home/peter/Documents/outreach/Template/packages/NUCover}
 
+\newcommand{\isotope}[3][]{\tikz[every node/.style = {inner sep = 0pt}]{
+    \node (isotope) {#2};
+    \node[left] (mass) at (isotope.north west) {\scriptsize#3};
+    \node[left] at (isotope.south west) {\scriptsize#1};
+    \pgfresetboundingbox
+    \useasboundingbox (mass.west |- isotope.north) rectangle (isotope.east |- isotope.base);
+}}
+
 \title{Cloud Chambers}
 \description{%
 See alpha radiation travel through the air, leaving trails of cloud behind. A
@@ -9,14 +17,14 @@ radioactive source is placed in a clear box filled with isopropyl alcohol vapour
 and chilled with dry ice. The emitted alpha particles ionise the vapour, causing
 it to condense into thin trails of cloud which are visible for a few secons.
 Cosmic rays can also sometimes be seen. }
-\duration{60} % [extension]{core}, in minutes
+\duration{1h} % [extension]{core}, in minutes, or like 1h25
 \stage{KS4, KS5}
 \workswith{Radioactivity}
 
 \prerequisite{Alpha radiation} % for the core activity
 %\prerequisite[]{...} % for the extension activity
 
-\curriculumlink[]{Radioactivity/whatever}
+\curriculumlink{Radioactivity/whatever}
 %\curriculumlink[...]{...}
 
 \begin{document}

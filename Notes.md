@@ -80,6 +80,7 @@
         - Can be pretty impressive with e.g. pond water
     - Making a pinhole camera
         - Can talk about diffraction, resolution, etc.
+        - $d = \sqrt{2.44}\sqrt{f\lambda}$, $d$ -- diameter of pinhole, $f$ -- focal length (distance to screen), $\lambda$ -- wavelength of light
     - Spectroscopy
         - Flame tests for identifying elements by spectral lines as well as just colour
     - Refraction of a laser to measure concentration of (e.g.) sugar in water?
@@ -88,6 +89,14 @@
         - Can (if done well) produce a 3D image, even in colour
         - Can do small moulds straight from the holographic foil, or larger ones with silicone moulds
 
+    Quite a nice series of activities for light could be:
+    - Make a pinhole camera
+        - Using it to take a photo on some sort of light-sensitive paper
+        - Add a lens, compare the two
+    - Using light box to explore lens design
+        - Focal length, magnification, etc.
+        - Refractive vs reflective telescopes
+    - Build a telescope
 
 - Circuits
     - Conductive pens
@@ -220,3 +229,107 @@
 - `worksheet.tex`
     - as `student`, twice
     - as `instructor`, twice
+
+
+## Shopping List
+
+- Planet Making
+    - [ ] new balloons
+    - [ ] bamboo skewers
+    - [ ] cocktail sticks
+- bottle rockets
+- crater activity
+- cloud chambers
+    - [ ] dry ice
+    - [ ] isopropyl alcohol
+    - [ ] plastic tubs
+    - [ ] felt
+    - [ ] small metal sheets (?)
+- projectiles
+- physics escape room
+- mars rover
+- Sound
+    - Slapaphone
+        - [ ] Wider pipes
+        - Need some way to actually hold the pipes in place
+    - Membrane flute
+        - [ ] balloons (maybe water balloons?)
+        - [ ] PVC pipe, narrow
+        - [ ] PVC T-connector, wide
+        - [ ] Cling film
+        - [ ] zip ties (or rubber bands)
+        - [ ] Large O-Ring? Or reducer?
+    - Oscilloscope
+        - [ ] Balloons
+        - [ ] small mirrors (about 1cm x 1cm)
+        - [ ] laser pointers
+        - [ ] Lightweight clamps/stands
+        - [ ] Plastic bowls/round containers
+        - [ ] Glow in the dark paint/paper (for screen)
+        - [ ] Small speaker?
+    - Ruben's Tube
+        - [ ] Large pipe (about 1m long, 10cm diameter)
+        - [ ] Small speaker
+        - [ ] Gas supply
+- Light
+    - Water Droplet Microscope
+        - [ ] small syringes
+        - [ ] Lightweight clamps/stands
+        - [ ] Laser pointers
+    - Pinhole Camera
+        - [ ] Cardboard (e.g., from cereal boxes)
+        - [ ] Shoebox (or similar)
+        - [ ] Black tape
+        - [ ] Tracing paper
+    - Light boxes
+        - [x] Light boxes
+        - [ ] 1D lenses
+        - [ ] 1D mirrors
+        - Need some track to hold them in place 
+    - Telescope Building
+        - [ ] Large tube
+        - [ ] End caps for mirror
+        - [ ] Camera sensor
+        - [ ] Raspberry Pi (or other processor)
+        - [ ] Mount internally for camera 
+    - Spectroscopy
+        - However we and up fixing the spectrometer 
+- Programming
+    - Programmable car
+        - [ ] Arduinos
+        - [ ] Wheels
+        - [ ] Probably 3D printed body
+        - [ ] Motors
+        - [ ] Battery packs
+        - LED Board
+            - [ ] Frosted acrylic upper
+            - [ ] RGB LEDs
+            - [ ] Arduino/Pi
+            - [ ] Power supply
+            - [ ] Wood/Acrylic/whatever base
+            - Some way to seal off the squares so the light doesn't bleed
+- Gravity
+    - web-based solar system simulation
+    - Gravity Well
+        - [ ] Stretchy material
+        - [ ] Ball bearings
+        - [ ] Frame (old trampoline frame?)
+        - [ ] Clamps. Lots of clamps
+        - [ ] Cord? (through the fabric, pull closed underneath?)
+        - [ ] Large ball bearings/marbles
+- Energy
+    - Bottle Rockets
+        - [ ] Water bottles
+        - [ ] Foot pumps
+        - [ ] Craft supplies for decoration
+        - [ ] Valve
+    - Rubber band powered vehicles
+        - [ ] Strong rubber bands
+        - [ ] Lego technic?
+        - [ ] Takeaway containers (for boats)
+        - [ ] Paper
+        - [ ] Straws
+        - [ ] Bamboo skewers
+        - [ ] Tape, bluetack, anything else
+        - [ ] balloons
+        - [ ] valves/turbines
