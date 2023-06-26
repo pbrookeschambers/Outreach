@@ -251,22 +251,34 @@
 - Sound
     - Slapaphone
         - [ ] Wider pipes
+            - [Toolstation](https://www.toolstation.com/solvent-weld-waste-pipe-3m/p57513)
+            - need about 10m total per group, probably more to account for inefficient cutting
         - Need some way to actually hold the pipes in place
+            - [Screwfix](https://www.screwfix.com/p/floplast-push-fit-pipe-clips-white-32mm-10-pack/14741)
     - Membrane flute
         - [ ] balloons (maybe water balloons?)
         - [ ] PVC pipe, narrow
+            - [Toolstation](https://www.toolstation.com/20mm-heavy-duty-pvc-round-conduit/p12598)
+            - about 40cm per group, so $\sim14$ m total (35 groups)
         - [ ] PVC T-connector, wide
+            - [screfix](https://www.screwfix.com/p/floplast-equal-tees-white-40mm-3-pack/99915)
+            - [screfix](https://www.screwfix.com/p/flomasta-end-feed-reducing-tee-28mm-x-22mm-x-28mm/42371)
         - [ ] Cling film
         - [ ] zip ties (or rubber bands)
         - [ ] Large O-Ring? Or reducer?
     - Oscilloscope
         - [ ] Balloons
         - [ ] small mirrors (about 1cm x 1cm)
+            - [Amazon](https://www.amazon.co.uk/100pcs-Square-Crafts-Mirror-Mosaic/dp/B0747MCQHH/ref=sr_1_10?crid=3B80B05151WQS&keywords=small%2Bmirrors%2Bfor%2Bcrafts&qid=1687777600&sprefix=small%2Bmirrors%2Caps%2C94&sr=8-10&th=1)
         - [ ] laser pointers
+            - Probably green, preferably about x35. Can double up with some of the other activities
         - [ ] Lightweight clamps/stands
         - [ ] Plastic bowls/round containers
+            - [Ikea](https://www.ikea.com/gb/en/p/kalas-bowl-mixed-colours-20461378/)
         - [ ] Glow in the dark paint/paper (for screen)
+            - [Amazon](https://www.amazon.com/CISinks-Photo-luminescent-Rechargeable-Luminous-Printing/dp/B07M5HYD8B/ref=sr_1_3?keywords=glow%2Bin%2Bthe%2Bdark%2Bpaper&qid=1687777893&sr=8-3&th=1)
         - [ ] Small speaker?
+            - Probably just get them to use their phones? 
     - Ruben's Tube
         - [ ] Large pipe (about 1m long, 10cm diameter)
         - [ ] Small speaker
@@ -276,11 +288,13 @@
         - [ ] small syringes
         - [ ] Lightweight clamps/stands
         - [ ] Laser pointers
+            - can double up with oscilloscope
     - Pinhole Camera
         - [ ] Cardboard (e.g., from cereal boxes)
-        - [ ] Shoebox (or similar)
         - [ ] Black tape
         - [ ] Tracing paper
+        - [ ] instant film
+            - [argos](https://www.argos.co.uk/product/8898180?istCompanyId=a74d8886-5df9-4baa-b776-166b3bf9111c&istFeedId=30f62ea9-9626-4cac-97c8-9ff3921f8558&istItemId=ixilatala&istBid=t&&cmpid=GS001&_$ja=tsid:59157%7cacid:416-707-6621%7ccid:20248192002%7cagid:%7ctid:%7ccrid:%7cnw:x%7crnd:11301590177318510901%7cdvc:c%7cadp:%7cmt:%7cloc:9046767&utm_source=Google&utm_medium=cpc&utm_campaign=20248192002&utm_term=8898180&utm_content=shopping&utm_custom1=&utm_custom2=416-707-6621&GPDP=true&gclid=Cj0KCQjw7uSkBhDGARIsAMCZNJv0RFgO7L3L70_-EbVJbrgtGFt_9KKB3j7Wu00xgBiQnceLQSqc-isaAhsYEALw_wcB&gclsrc=aw.ds)
     - Light boxes
         - [x] Light boxes
         - [ ] 1D lenses
