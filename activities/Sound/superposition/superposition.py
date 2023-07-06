@@ -1,6 +1,6 @@
 import numpy as np
 import qoplots.qoplots as qoplots
-qoplots.init("rose_pine")
+qoplots.init("rose_pine", doc_type = "presentation")
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 import time
@@ -61,7 +61,7 @@ def update(frame):
     w = 0.08
     y1 = wave(x, w, 1, frame / max_frames)
     # y2 starts from the right and propagates to the left
-    y2 = wave(x, w, 1, (1 - frame / max_frames))
+    y2 = -wave(x, w, 1, (1 - frame / max_frames))
     lines[0].set_data(x, y1 + 2)
     lines[1].set_data(x, y2)
     y = y1 + y2
