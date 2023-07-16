@@ -75,7 +75,10 @@ def main():
     for template_name, template in templates.items():
         rprint(f"Creating {directory / f'{template_name}.tex'}")
         template_path = directory / f"{template_name}.tex"
-        text = template.format(package_dir=Path(__file__).parent / "packages", title=template_name)
+        # package_dir relative to the template file
+        package_dir = Path(__file__).parent / "packages"
+        package_dir = package_dir.relative_to(directory)
+        text = template.format(package_dir=package_dir, title=template_name)
         with open(template_path, "w+") as f:
             f.write(text)
 

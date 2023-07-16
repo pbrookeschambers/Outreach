@@ -1,0 +1,198 @@
+\documentclass{article}
+
+\usepackage{../../../Template/packages/NUInstructions}
+\usepackage{siunitx}
+
+\distinctinstructortrue
+\def\instructorstyle{\color{Accent2}\itshape}
+
+\ExplSyntaxOn
+\newcommand{\notename}[3][]{
+    %\notename[^]{D}{3} --> \ensuremath{\text{D}^{\#}_{3}}
+    %\notename{D}{3} --> \ensuremath{\text{D}_{3}}
+    %\notename[_]{D}{} --> \ensuremath{\text{D}^{b}}
+    %\notename[=]{D}{2} --> \ensuremath{\text{D}^{nat}_{2}}
+    \str_clear_new:N \l_accidental_str%
+    \str_set:Nn \l_accidental_str {#1}%
+    \str_if_empty:NTF \l_accidental_str {
+        \ensuremath{\text{#2}\sb{#3}}%
+    }{
+        \str_case:Vn \l_accidental_str {%
+            {_} {\ensuremath{\text{#2}^{\flat}\sb{#3}}}%
+            {^} {\ensuremath{\text{#2}^{\sharp}\sb{#3}}}%
+            {=} {\ensuremath{\text{#2}^{\natural}\sb{#3}}}%
+        }
+    }
+}
+\ExplSyntaxOff
+
+\usepackage{musixtex}
+
+\begin{document}
+
+\begin{instructoronly}
+    Before starting this activity, run through the ``Standing Waves'' presentation. This recaps wave terminology, how standing waves are formed, the requirements for standing waves, and briefly touches on harmonics and why the fundamental frequency is the loudest.
+
+    If you have already run the Membrane Flute activity with the same group, the presentation is identical and can be skipped.
+
+    This activity will require students to select the appropriate lengths of pipe for the piece of music they choose (or are given). This will involve reading music; while all necessary instructions are given, the instructor (you) should make sure they are familiar enough with the process to be able to help students who are struggling.
+\end{instructoronly}
+
+\section{Introduction}
+
+% Connect standing waves and sound
+% Understand frequency-pitch relationship
+% Work out what notes are needed
+% Work out what frequency each note is
+% Work out pipe lengths for each note
+%
+% Assemble
+% Play
+ 
+By this point, you should have seen the presentation on standing waves, in which we discussed how waves propagate and interact to form standing waves. Most of the concepts discussed were framed as an oscillating string, but the same principles apply to any wave, including ripples on a pond, light (electromagnetic waves), and sound waves. Sound waves differ from the other examples mentioned in that they are longitudinal waves, rather than transverse waves. This means that the oscillations are parallel to the direction of travel of the wave, rather than perpendicular to it. 
+
+Since sound is also a wave, some conditions can set up standing waves in air. The clearest example of this is wind instruments: in general, a wind instrument in its simplest form is a pipe, open at one end. A standing wave can be set up within that pipe, and just like before the allowed frequency is determined by the length of the pipe. We hear different frequencies as different pitches, so the length of the pipe determines the pitch of the note played. There's then three ways in which wind instruments change the note played. The simplest is by having multiple pipes of different length, like a church organ. Alternatively, they might physically change the length of the pipe, like a trombone. Finally, they might cover and uncover holes in the pipe, like a clarinet or recorder. This forces the standing wave to have a node at the hole, changing which frequencies are allowed.
+
+\ifinstructor
+\clearpage
+\fi
+
+\section{Sheet Music}
+
+As part of this activity, you'll be reading sheet music, which looks a bit like this:
+
+\begin{music}
+    % \let\extractline\relax
+    \parindent10mm
+    \instrumentnumber{1} % a single instrument
+    \setstaffs1{1} % with two staffs
+    \generalmeter{\meterfrac44} % 4/4 meter chosen
+    \generalsignature{-2}
+    \startextract % starting real score
+    \Notes\ibu0d2\qb0{cde}\tbu0\qb0{f} \ibu{0}{g}{-3}\qb0{g}\tbu0\qb0{e}\qa{g} \en
+    \bar
+    \Notes\ibu0f{-3} \qb0{^f}\tbu0\qb0{d} \qa{f} \ibu0f{-3}\qb0{=f}\tbu0\qb0{_d} \qa{f} \en
+    \endextract % terminate excerpt
+\end{music}
+
+You can think of this as a bit like a graph: the $y$-axis represents pitch, and the $x$ axis represents time. Then, the shape of the notes themselves tell you how long each note should be played, and any markings (like the $\sharp$ and $\flat$ symbols) indicate some modification to how the note would normally sound. 
+
+We'll break down the example above, but first a short primer on the notes in the 12-note scale\footnote{A 12-note scale is most common in western music, but is far from the only scale used. For example, Indian classical music uses a 22-note scale, which contains pitches which sit between the notes in the 12-note scale.}.
+We divide the range of all possible pitches into sections called octaves. These are defined such that one octave starts at exactly double the frequency of the previous octave. Because of this nice relationship between the frequencies, notes that are one octave apart sound good together, and also fulfil similar roles in music. This makes it quite logical to name the notes in each octave the same, and use a number to indicate the octave. For example, the note \notename{A}{} in the 4\th{} octave has frequency \SI{440}{\hertz}\footnote{The frequency of \notename{A}{4} is actually used to define the tuning; A-440 is the standard tuning for orchestras, but other tunings are used in other contexts.}, while the note \notename{A}{} in the 5\th{} octave has frequency \SI{880}{\hertz}. 
+
+It's worth emphasising that frequency and perceived pitch don't have a linear relationship; we hear the jump between \SI{220}{\hertz} and \SI{440}{\hertz} as the same as the jump from \SI{880}{\hertz} to \SI{1760}{\hertz}. The difference between the two is not the same, but the ratio is.
+
+Within each octave, we define 12 notes. Exactly how these are defined is not actually very straight forward, but for the purposes of this activity we'll just assume we're using something called equal temperament. This means that the ratio between any two adjacent notes is always the same, and is the 12\th{} root of 2 ($\sqrt[12]{2}\approx 1.059463$). To go from the first note of an octave to the second, we multiply the frequency by $\sqrt[12]{2}$. This means to go from the first note of one octave to the first note of the next, we multiply the frequency by $\sqrt[12]{2}$ 12 times, which is the same as multiplying by $2$. We usually call the jump from one note to the next a half-step or a semitone. Jumping up two notes is called a whole-step or a tone.
+
+When writing music, we don't usually use all 12 notes in a given octave. In western music, we usually use a subset of 7\footnote{This is why it is called an octave; with a 7-note scale, the 8\th{} note is the same as the first but an octave higher. ``Oct'' is a prefix from Greek that means 8.}. This is called a key. The simplest key is called C major (you can safely ignore the ``major'' for this activity), in which the 7 keys used are labeled with the letters A to G. The notes in between are then labelled with what are called accidentals: a sharp ($\sharp$) raises the pitch by a semitone, while a flat ($\flat$) lowers the pitch by a semitone. 
+
+\clearpage
+
+The easiest way to show this is with a piano keyboard:
+
+\begin{center}
+\begin{tikzpicture}[
+    arrow outer/.style = {
+        line width = 1mm, 
+        white, 
+        {Circle[width = 1.5mm, length = 1.5mm]}-{Classical TikZ Rightarrow[
+            width = 3.75mm, 
+            length = 3.75mm
+        ]}
+    },
+    arrow inner/.style = {
+        line width = 0.5mm, 
+        Accent1, 
+        {Circle[width = 1mm, length = 1mm]}-{Classical TikZ Rightarrow[
+            width = 3.25mm, 
+            length = 3.25mm
+        ]},
+        shorten > = {0.25mm},
+        shorten < = {0.25mm}
+    },
+    label/.style = {
+        fill = white,
+        fill opacity = 0.8,
+        inner sep = 1pt
+    }
+]
+\pgfmathsetmacro{\whitewidth}{1}
+\pgfmathsetmacro{\blackwidth}{0.6}
+\pgfmathsetmacro{\whiteheight}{5}
+\pgfmathsetmacro{\blackheight}{2.75}
+\foreach \i in {0,...,7} {
+    \draw[fill=white] (\i*\whitewidth,0) rectangle (\i*\whitewidth+\whitewidth,\whiteheight);
+}
+\foreach \i in {0,1,3,4,5} {
+    \draw[fill=black] (\i*\whitewidth+\whitewidth-\blackwidth/2,\whiteheight) rectangle (\i*\whitewidth+\whitewidth+\blackwidth/2,\whiteheight-\blackheight);
+}
+\foreach \i/\n in {0/C,1/D,2/E,3/F,4/G,5/A,6/B,7/C} {
+    \node[above, ForegroundColour] at (\i*\whitewidth+\whitewidth/2,0) {\n};
+}
+\foreach \i/\n/\o in {%
+    0/{$\text{C}^\sharp$}/{$\text{D}^\flat$},%
+    1/{$\text{D}^\sharp$}/{$\text{E}^\flat$},%
+    3/{$\text{F}^\sharp$}/{$\text{G}^\flat$},%
+    4/{$\text{G}^\sharp$}/{$\text{A}^\flat$},%
+    5/{$\text{A}^\sharp$}/{$\text{B}^\flat$}%
+}{
+    \node[below, BackgroundColour] (n) at ({(\i+1)*\whitewidth},\whiteheight) {\n};
+    \node[below, BackgroundColour] (o) at (n.south) {\o};
+}
+\coordinate (start) at ({\whitewidth / 2}, {\whiteheight - \blackheight - 0.75  });
+\coordinate (end)   at ({\whitewidth - 0.1}    , {\whiteheight - \blackheight + 0.3});
+\draw[arrow outer] (start) -- (end) node[midway, left = 1mm, label, text = Accent1] {Semitone};
+\draw[arrow inner] (start) -- (end);
+
+\coordinate (start) at ({\whitewidth + 0.1}, {\whiteheight - \blackheight + 0.3});
+\coordinate (end)   at ({\whitewidth * 1.5}, {\whiteheight - \blackheight - 0.75}); 
+\draw[arrow outer] (start) -- (end) node[midway, right = 1mm, label, text = Accent1] {Semitone};
+\draw[arrow inner] (start) -- (end);
+
+\coordinate (start) at ({\whitewidth / 2}, {\whiteheight - \blackheight - 1});
+\coordinate (end)   at ({\whitewidth * 1.5}, {\whiteheight - \blackheight - 1});
+\draw[arrow outer] (start) -- (end) node[midway, below = 1mm, align = center, label, text = Accent2] {Whole Tone};
+\draw[arrow inner, Accent2] (start) -- (end);
+
+\coordinate (start) at ({\whitewidth * 6.5}, {\whiteheight - \blackheight - 1});
+\coordinate (end) at ({\whitewidth * 7.5}, {\whiteheight - \blackheight - 1});
+\draw[arrow outer] (start) -- (end) node[midway, below = 1mm, align = center, label, text = Accent1] {Semitone};
+\draw[arrow inner] (start) -- (end);
+\end{tikzpicture}
+\end{center}
+
+The 7 notes used in C major are given white keys, while the 5 other notes sit between those as black keys\footnote{Until relatively recently, this was inverted; harpsichords and other keyboard instruments used to have a large row of black keys and a small upper row of white keys}. 
+
+We can now look at some actual sheet music. The following is a C major scale; the notes in the key of C in ascending then descending order.
+
+\begin{music}
+    % \let\extractline\relax
+    \parindent10mm
+    \instrumentnumber{1} % a single instrument
+    \setstaffs1{1} % with two staffs
+    % \generalmeter{\meterfrac44} % 4/4 meter chosen
+    % \generalsignature{-2}
+    \startextract % starting real score
+    \Notes\qa{cdefghijihgfedc}\en
+    \endextract % terminate excerpt
+\end{music}
+
+% There are 7 white keys, and 5 black keys\footnote{For several centuries, on harpsichords and other keyboard instruments this was inverted, a lower row of black keys and upper row of white.}. The white keys are the notes C, D, E, F, G, A, and B. These are periodic; the next note after B is C again. The black keys are sharps ($\sharp$) and flats ($\flat$), and sit between the other (natural) notes. They have two names, depending on the context; for example, the first black key is between C and D, so it can be called \notename[^]{C}{} or \notename[_]{D}{}. Usually, it'll be \notename[^]{C}{} if it is taking the place of a \notename{C}, and \notename[_]{D}{} if it is replacing a \notename{D}, but it's still the same note.
+
+% Going from one note to the next is known as a half-step or a semitone; we can say that \notename[^]{F}{} is one semitone higher than \notename{F}{}. The distance between \notename{F}{} and \notename{G}{} is a whole step, or a tone. Notice that there is no black note between \notename{E}{} and \notename{F}{} or between \notename{B}{} and \notename{C}{}; these are only separated by a semitone. We have 12 notes in total, each one semitone higher than the last, but because of how they sound to us, we have only labelled 7 of them.
+
+% Adding a sharp ($\sharp$) to a note means ``go up one semitone'', while a flat ($\flat$) means ``go down one semitone'': \notename[^]{C}{} is one semitone higher than \notename{C}{}. This also means that \notename[^]{E}{} is equivalent to \notename{F}{}, since one semitone above \notename{E}{} is \notename{F}{}.
+
+% Looking back at our sample of music, the first thing on the left is a treble clef: 
+% \begin{music}
+% \let\extractline\relax
+% \instrumentnumber{1} 
+% \setstaffs1{1} 
+% \setlines10\smallmusicsize \nobarnumbers \nostartrule
+% \staffbotmarg0pt %\setclefsymbol1\empty
+% % \generalmeter{\meterfrac44}
+% \startextract\addspace{-\afterruleskip}\zendextract
+% \end{music}. This will be the same on all of the music you'll see here; it just tells you the range of the notes on the staff. We can ignore it for now. Next, we see two flat symbols. This is the key signature; it tells you which of the 12 notes we'll (mostly) be using. 
+
+
+\end{document}

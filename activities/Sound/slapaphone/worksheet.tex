@@ -1,0 +1,76 @@
+\documentclass{article}
+
+\usepackage{../../../Template/packages/NUWorksheet}
+
+\ExplSyntaxOn
+\newcommand{\notename}[3][]{
+    %\notename[^]{D}{3} --> \ensuremath{\text{D}^{\#}_{3}}
+    %\notename{D}{3} --> \ensuremath{\text{D}_{3}}
+    %\notename[_]{D}{} --> \ensuremath{\text{D}^{b}}
+    %\notename[=]{D}{2} --> \ensuremath{\text{D}^{nat}_{2}}
+    \str_clear_new:N \l_accidental_str%
+    \str_set:Nn \l_accidental_str {#1}%
+    \str_if_empty:NTF \l_accidental_str {
+        \ensuremath{\text{#2}\sb{#3}}%
+    }{
+        \str_case:Vn \l_accidental_str {%
+            {_} {\ensuremath{\text{#2}^{\flat}\sb{#3}}}%
+            {^} {\ensuremath{\text{#2}^{\sharp}\sb{#3}}}%
+            {=} {\ensuremath{\text{#2}^{\natural}\sb{#3}}}%
+        }
+    }
+}
+\ExplSyntaxOff
+
+\usepackage{musixtex}
+\usepackage{siunitx}
+\usepackage{multicol}
+
+\begin{document}
+
+\task{}
+
+\subtask{}
+
+Look at the sheet music you've been provided. Write the note names above each note. For example:
+
+\begin{music}
+    % \let\extractline\relax
+    \parindent10mm
+    \instrumentnumber{1} % a single instrument
+    \setstaffs1{1} % with two staffs
+    \generalmeter{\meterfrac44} % 4/4 meter chosen
+    \generalsignature{-2}
+    \startextract % starting real score
+    \Notes\ibu0d2\zcn{o}{\notename{C}{4}}\qb0{c}\zcn{o}{\notename{D}{4}}\qb0{d}\zcn{o}{\notename[_]{E}{4}}\qb0{e}\tbu0\zcn{o}{\notename{F}{4}}\qb0{f} \ibu{0}{g}{-3}\zcn{o}{\notename{G}{4}}\qb0{g}\tbu0\zcn{o}{\notename[_]{E}{4}}\qb0{e}\zcn{o}{\notename{G}{4}}\qa{g} \en
+    \bar
+    \Notes\ibu0f{-3} \qb0{^f}\tbu0\qb0{d} \qa{f} \ibu0f{-3}\qb0{=f}\tbu0\qb0{_d} \qa{f} \en
+    \endextract % terminate excerpt
+\end{music}
+
+\subtask{}
+
+Fill in the table below with all the unique notes in your music (where \notename{E}{4} is not the same as \notename{E}{5}). Use the table in the instructions to fill in the ``Frequency'' column. Then, use equation (\ref{eq:length}) to calculate the length of pipe needed to make that note, where $l$ is the length of the pipe, $r$ the radius, and $f$ the frequency of the note. You may use $v = \SI{343}{\meter\per\second}$ as the speed of sound, and $d = \SI{32}{\milli\meter}$ as the \textbf{diameter} of the pipe.
+
+\begin{equation}
+    l = r + \frac{v}{2f} \label{eq:length}
+\end{equation}
+
+\begin{multicols}{2}
+    \answertable{
+        rows = 8,
+        columns = 3,
+        headers = {Note, Frequency (\si{\hertz}), Length (\answerinline{mm})},
+    }
+    \answertable{
+        rows = 8,
+        columns = 3,
+        headers = {Note, Frequency (\si{\hertz}), Length (\answerinline{mm})},
+    }
+\end{multicols}
+
+\task{}
+
+In your groups, select which pipes you need and secure them to your board. Play the pipes by gently hitting the end of the pipe with your palm so that it forms a seal around the end. Practice the piece you've been given in your groups; you may want to each be responsible for a few notes (e.g., \notename{C}{4} to \notename[^]{G}{4}), or for a section of the piece (e.g., bars 1-4, 5-8, etc.). Practice slowly, and gradually increase the speed until you can play the piece at the correct tempo.
+
+\end{document}

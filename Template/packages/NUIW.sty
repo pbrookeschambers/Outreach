@@ -23,6 +23,9 @@
 \newif\ifstudentchanges
 \studentchangesfalse
 
+\newif\ifdistinctinstructor % If true, anything that is only visible to the instructor will be visually distinct from the rest of the document.
+\distinctinstructorfalse
+\def\instructorstyle{\color{Accent1}}
 
 \checkfile{\jobname.flags}
 \ifnum\filestatus=0% File exists and is not empty
@@ -48,12 +51,12 @@
 % For students only:
 \NewEnviron{studentonly}{\iftracking\global\studentchangestrue\fi\ifstudent\BODY\fi}
 % For instructors only:
-\NewEnviron{instructoronly}{\iftracking\global\studentchangestrue\fi\ifinstructor\BODY\fi}
+\NewEnviron{instructoronly}{\iftracking\global\studentchangestrue\fi\ifinstructor{\ifdistinctinstructor\instructorstyle\fi\BODY}\fi}
 % For the extension activity only:
 \NewEnviron{extensiononly}{\iftracking\global\extensionchangestrue\fi\ifextension\BODY\fi}
 % For students only, 
 \NewEnviron{studentextensiononly}{\iftracking\global\studentchangestrue\global\extensionchangestrue\fi\ifstudent\ifextension\BODY\fi\fi}
-\NewEnviron{instructorextensiononly}{\iftracking\global\studentchangestrue\global\extensionchangestrue\fi\ifinstructor\ifextension\BODY\fi\fi}
+\NewEnviron{instructorextensiononly}{\iftracking\global\studentchangestrue\global\extensionchangestrue\fi\ifinstructor\ifextension{\ifdistinctinstructor\instructorstyle\fi\BODY}\fi\fi}
 
 % #endregion Environments
 

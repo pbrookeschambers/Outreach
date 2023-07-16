@@ -1,0 +1,80 @@
+\documentclass{article}
+
+\usepackage{../../../Template/packages/NUCover}
+
+\title{Slapaphone}
+\description{Build a musical instgrument in groups from PVC piping, and learn to play it. This is a very flexible duration.}
+\duration[1h30]{1h} % [extension]{core}, in minutes, or like 1h25
+\stage{KS3+}
+\workswith{Membrane Flute, Balloon Osciliscope}
+
+\prerequisite{Waves. Standing waves will be recapped.} % for the core activity
+%\prerequisite[]{...} % for the extension activity
+
+%\curriculumlink[...]{...}
+%\curriculumlink[...]{...}
+
+\ExplSyntaxOn
+\newcommand{\notename}[3][]{
+    %\notename[^]{D}{3} --> \ensuremath{\text{D}^{\#}_{3}}
+    %\notename{D}{3} --> \ensuremath{\text{D}_{3}}
+    %\notename[_]{D}{} --> \ensuremath{\text{D}^{b}}
+    %\notename[=]{D}{2} --> \ensuremath{\text{D}^{nat}_{2}}
+    \str_clear_new:N \l_accidental_str%
+    \str_set:Nn \l_accidental_str {#1}%
+    \str_if_empty:NTF \l_accidental_str {
+        \ensuremath{\text{#2}\sb{#3}}%
+    }{
+        \str_case:Vn \l_accidental_str {%
+            {_} {\ensuremath{\text{#2}^{\flat}\sb{#3}}}%
+            {^} {\ensuremath{\text{#2}^{\sharp}\sb{#3}}}%
+            {=} {\ensuremath{\text{#2}^{\natural}\sb{#3}}}%
+        }
+    }
+}
+\ExplSyntaxOff
+
+\begin{document}
+
+\begin{equipment}
+    32mm PVC piping & \textit{see below} \\
+    Large stand \\
+    Sticky labels \\
+    Marker pens
+\end{equipment}
+
+Each group (3-4 groups total), will need a set of PVC piping of 32mm diameter, cut to the following lengths: 
+\begin{center}
+\begin{tabular}{r c c}
+    Note & Frequency (Hz) & Length (mm) \\\hline
+    \notename{C}{4} & $261.63$ & $672$\\
+    \notename[^]{C}{4}, \notename[_]{D}{4} & $277.18$ & $635$\\
+    \notename{D}{4} & $293.66$ & $600$\\
+    \notename[^]{D}{4}, \notename[_]{E}{4} & $311.13$ & $567$\\
+    \notename{E}{4} & $329.63$ & $536$\\
+    \notename{F}{4} & $349.23$ & $507$\\
+    \notename[^]{F}{4}, \notename[_]{G}{4} & $369.99$ & $480$\\
+    \notename{G}{4} & $392.00$ & $454$\\
+    \notename[^]{G}{4}, \notename[_]{A}{4} & $415.30$ & $429$\\
+    \notename{A}{4} & $440.00$ & $406$\\
+    \notename[^]{A}{4}, \notename[_]{B}{4} & $466.16$ & $384$\\
+    \notename{B}{4} & $493.88$ & $363$\\
+    \notename{C}{5} & $523.25$ & $344$\\
+    \notename[^]{C}{5}, \notename[_]{D}{5} & $554.37$ & $325$\\
+    \notename{D}{5} & $587.33$ & $308$\\
+    \notename[^]{D}{5}, \notename[_]{E}{5} & $622.25$ & $292$\\
+    \notename{E}{5} & $659.25$ & $276$\\
+    \notename{F}{5} & $698.46$ & $262$\\
+    \notename[^]{F}{5}, \notename[_]{G}{5} & $739.99$ & $248$\\
+    \notename{G}{5} & $783.99$ & $235$\\
+    \notename[^]{G}{5}, \notename[_]{A}{5} & $830.61$ & $222$\\
+    \notename{A}{5} & $880.00$ & $211$\\
+    \notename[^]{A}{5}, \notename[_]{B}{5} & $932.33$ & $200$\\
+    \notename{B}{5} & $987.77$ & $190$\\
+    \notename{C}{6} & $1046.50$ & $180$\\
+\end{tabular}
+\end{center}
+
+
+
+\end{document}
