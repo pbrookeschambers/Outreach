@@ -6,9 +6,30 @@ import subprocess
 from pathlib import Path
 from typing import List, Tuple
 
+import argparse
+
+def parse_args():
+    # process.py path [-n -C -o]
+    # -n, --no-labels: don't add labels to the notes
+    # -C, --no-compile: don't compile the file
+    # -s, --suffix: suffix to the file name, default `_temp`
+    # -S, --no-suffix: don't add a suffix to the file name
+    # -d, --directory: output directory, default same as input
+    # -p, --pdf: compile to pdf instead of svg
+    parser = argparse.ArgumentParser()
+    parser.add_argument("path", help="Path to the file to process")
+    parser.add_argument("-n", "--no-labels", help="Don't add labels to the notes", action="store_true")
+    parser.add_argument("-C", "--no-compile", help="Don't compile the file", action="store_true")
+    parser.add_argument("-s", "--suffix", help="Suffix to the file name, default `_temp`", default="_temp")
+    parser.add_argument("-S", "--no-suffix", help="Don't add a suffix to the file name", action="store_true")
+    parser.add_argument("-d", "--directory", help="Output directory, default same as input")
+    parser.add_argument("-p", "--pdf", help="Compile to pdf instead of svg", action="store_true")
+    return parser.parse_args()
+
 key = 0
 active_accidentals = [None] * 7
 ignore_next_label = False
+base_note_length = 8
 key_map = {
     # 0b[#/b]CDEFGAB. E.g., 0b10001000 is G major: 0b[sharp][C = natural][D = natural][E = natural][F = sharp][G = natural][A = natural][B = natural]
     0: 0b10000000,
@@ -32,18 +53,45 @@ all_notes_used = None
 
 def main():
     # get the path of the file
-    path = Path(sys.argv[1])
-    add_labels = not(len(sys.argv) > 2 and sys.argv[2] == "-n")
+    args = parse_args()
+    path = Path(args.path)
+    add_labels = not(args.no_labels)
+    compile_file = not(args.no_compile)
     # check the file exists
+    if args.no_suffix:
+        args.suffix = ""
+    if args.directory:
+        args.directory = Path(args.directory)
+        if not args.directory.exists():
+            # create it
+            args.directory.mkdir(parents=True, exist_ok=True)
     if not path.exists():
         raise Exception("File does not exist")
     if path.is_dir():
         for file in path.glob("*.tex"):
-            process_file(file, add_labels=add_labels)
+            process_file(file, add_labels=add_labels, compile = compile_file, suffix = args.suffix, output_dir = args.directory, pdf_only = args.pdf)
     else:
-        process_file(path, add_labels=add_labels)
+        process_file(path, add_labels=add_labels, compile = compile_file, suffix = args.suffix, output_dir = args.directory, pdf_only = args.pdf)
 
-def process_file(path, add_labels = False):
+def should_add_labels(block):
+    # look for `\add_labels`, `\add_labels{true}`, or `\add_labels{false}`
+    # if `\add_labels` is found, return True
+    # if `\add_labels{true}` is found, return True
+    # if `\add_labels{false}` is found, return False
+    # if none of the above are found, return None
+    lines = block.splitlines()
+    lines = [l.split("%")[0] for l in lines]
+    lines = [l for l in lines if l.strip()]
+    for line in lines:
+        if "\\add_labels{true}" in line.lower():
+            return True
+        elif "\\add_labels{false}" in line.lower():
+            return False
+        elif "\\add_labels" in line.lower():
+            return True
+    return None
+
+def process_file(path, add_labels = False, compile = True, suffix = "", output_dir = None, pdf_only = False):
     global key, all_notes_used
     with path.open("r") as f:
         contents = f.read()
@@ -52,46 +100,51 @@ def process_file(path, add_labels = False):
     if len(music_blocks) == 0:
         raise Exception("No music blocks found")
     for i, block in enumerate(music_blocks):
+        new_block = block[1]
+        add_labels_local = should_add_labels(new_block)
+        new_block = re.sub(r"\\add_labels{.*?}", "", new_block)
         all_notes_used = set()
-        key = get_key(block[1])
-        new_block = block[1].splitlines()
+        key = get_key(new_block)
+        new_block = new_block.splitlines()
         new_block = [line for line in new_block if not line.strip().startswith("%")]
         new_block = [line.split("%")[0] for line in new_block]
         new_block = "".join(new_block)
         new_block = new_block.replace("\n", "").replace(" ", "")
-        new_block = parse_py(new_block, add_labels=add_labels)
+        new_block = parse_py(new_block, add_labels=add_labels if add_labels_local is None else add_labels_local)
         contents = contents.replace(block[1], new_block)
         print(f"For block {i+1}, {len(all_notes_used)} notes used: {', '.join(all_notes_used)}")
-    outfile = path.parent / (path.stem + "_temp.tex")
+    outfile = path.parent / (path.stem + suffix + ".tex")
+    if output_dir:
+        outfile = Path(output_dir) / (path.stem + suffix + ".tex")
     outfile.write_text(contents)
-    # os.system(f"pdflatex -jobname={path.stem} {outfile}")
-    # os.system(f"pdflatex -jobname={path.stem} {outfile}")
-    # using subprocess instead of os.system to suppress output. Capture anyway in case of errors
-    result = subprocess.run(["pdflatex", "-jobname", path.stem, outfile], capture_output=True)
-    if result.returncode != 0:
-        print(result.stderr.decode("utf-8"))
-        raise Exception("pdflatex failed")
-    result = subprocess.run(["pdflatex", "-jobname", path.stem, outfile], capture_output=True)
-    if result.returncode != 0:
-        print(result.stderr.decode("utf-8"))
-        raise Exception("pdflatex failed")
-    outfile.unlink()
-    # os.system(f"pdf2svg {path.stem}.pdf {path.stem}.svg")
-    result = subprocess.run(["pdf2svg", f"{path.stem}.pdf", f"{path.stem}.svg"], capture_output=True)
-    if result.returncode != 0:
-        print(result.stderr.decode("utf-8"))
-        raise Exception("pdf2svg failed")
-    svg_file = Path(f"{path.stem}.svg")
-    with svg_file.open("r") as f:
-        svg_contents = f.read()
-        # replace anything black with rgb(87, 82, 121)
-        svg_contents = svg_contents.replace("rgb(0%,0%,0%)", "rgb(87, 82, 121)")
-    with svg_file.open("w") as f:
-        f.write(svg_contents)
-    # remove all the auxiliary files (.aux, .log, .mx1, .pdf)
-    for file in path.parent.glob(f"{path.stem}.*"):
-        if file.suffix in [".aux", ".log", ".mx1", ".pdf"]:
-            file.unlink()
+    # using subprocess instead of os.system to suppress output. Capture anyway in case of errors. Run from the output directory.
+    if compile:
+        result = subprocess.run(["pdflatex", "-jobname", path.stem, outfile.name], capture_output=True, cwd=output_dir)
+        if result.returncode != 0:
+            print(result.stderr.decode("utf-8"))
+            raise Exception("pdflatex failed")
+        result = subprocess.run(["pdflatex", "-jobname", path.stem, outfile.name], capture_output=True, cwd=output_dir)
+        if result.returncode != 0:
+            print(result.stderr.decode("utf-8"))
+            raise Exception("pdflatex failed")
+        outfile.unlink()
+        # os.system(f"pdf2svg {path.stem}.pdf {path.stem}.svg")
+        if not pdf_only:
+            result = subprocess.run(["pdf2svg", f"{path.stem}.pdf", f"{path.stem}.svg"], capture_output=True, cwd=output_dir)
+            if result.returncode != 0:
+                print(result.stderr.decode("utf-8"))
+                raise Exception("pdf2svg failed")
+            svg_file = Path(f"{path.stem}.svg")
+            with svg_file.open("r") as f:
+                svg_contents = f.read()
+                # replace anything black with rgb(87, 82, 121)
+                svg_contents = svg_contents.replace("rgb(0%,0%,0%)", "rgb(87, 82, 121)")
+            with svg_file.open("w") as f:
+                f.write(svg_contents)
+        # remove all the auxiliary files (.aux, .log, .mx1, .pdf)
+        for file in output_dir.glob(f"{path.stem}.*"):
+            if file.suffix in [".aux", ".log", ".mx1"] + ([".pdf"] if not pdf_only else []):
+                file.unlink()
     
 
 def note_to_label(note):
@@ -115,9 +168,15 @@ def note_to_label(note):
     # return ""
 
 def parse_py(contents, add_labels = False):
-    global active_accidentals
+    global active_accidentals, base_note_length
     out = StringIO()
     pattern = re.compile(r"\\py(\[(?P<direction>.*?)\])?{(?P<length>.*?)}{(?P<notes>.*?)}(?P<tie>{tie})?")
+    note_length_match = re.search(r"\\py_set_base_note{(?P<length>.*?)}", contents)
+    if note_length_match is not None:
+        base_note_length = int(note_length_match.group("length"))
+        contents = contents.replace(note_length_match.group(0), "")
+    else:
+        base_note_length = 8 # default to quaver
     while len(contents) > 0:
         if contents.startswith("\\bar"):
             out.write("\\bar")
@@ -155,7 +214,7 @@ def parse_py(contents, add_labels = False):
     return out
         
 def _non_beamed(length, notes, dotted, tie_last = False, add_labels = False, direction = None) -> str:
-    global ignore_next_label
+    global ignore_next_label, base_note_length
     out = StringIO()
     for i, note in enumerate(notes):
         if direction is None:
@@ -164,13 +223,13 @@ def _non_beamed(length, notes, dotted, tie_last = False, add_labels = False, dir
             up = direction.lower() == "up"
         if length == 1:
             macro = "\\wh"
-            post = r"\sk" * int(8 * (1.5 if dotted else 1) - 1)
+            post = r"\sk" * int(base_note_length * (1.5 if dotted else 1) - 1)
         elif length == 2:
             macro = f"\\h{'u' if up else 'l'}" 
-            post = r"\sk" * int(4 * (1.5 if dotted else 1) - 1)
+            post = r"\sk" * int(base_note_length / 2 * (1.5 if dotted else 1) - 1)
         elif length == 4:
             macro = f"\\q{'u' if up else 'l'}"
-            post = r"\sk" * int(2 * (1.5 if dotted else 1) - 1)
+            post = r"\sk" * int(base_note_length / 4 * (1.5 if dotted else 1) - 1)
         else:
             raise Exception(f"Invalid length: {length}")
         if dotted:
@@ -208,6 +267,8 @@ def _beamed(length, notes, dotted, tie_last = False, add_labels = False, directi
             out.write(note_to_label(note))
         ignore_next_label = False
         out.write(f"\\{'c' * num_beams}{'u' if up else 'l'}{{{note[0]}}}")
+        if length < base_note_length:
+            out.write(r"\sk" * int(base_note_length / length - 1))
         if tie_last:
             out.write("\\ttie{0}")
             ignore_next_label = True
@@ -230,12 +291,16 @@ def _beamed(length, notes, dotted, tie_last = False, add_labels = False, directi
             out.write(note_to_label(note))
         ignore_next_label = False
         out.write(f"{macro}{{{note_to_musixtex(note)}}}")
+        if length < base_note_length:
+            out.write(r"\sk" * int(base_note_length / length - 1))
     out.write(f"\\tb{'u' if up else 'l'}{{0}}")
     if tie_last:
         out.write(f"\\itie{'d' if up else 'u'}{{0}}{notes[-1][0]}")
     if not ignore_next_label and add_labels:
         out.write(note_to_label(notes[-1]))
     out.write(f"{macro}{{{note_to_musixtex(notes[-1])}}}")
+    if length < base_note_length:
+        out.write(r"\sk" * int(base_note_length / length - 1))
     if tie_last:
         ignore_next_label = True
         out.write("\\ttie{0}")

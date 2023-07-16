@@ -2,6 +2,7 @@
 
 \usepackage{../../../Template/packages/NUInstructions}
 \usepackage{siunitx}
+\usepackage{multicol}
 
 \distinctinstructortrue
 \def\instructorstyle{\color{Accent2}\itshape}
@@ -26,6 +27,22 @@
 }
 \ExplSyntaxOff
 
+\newcommand{\notelabel}[1]{%
+    \zcharnote{s}{#1}%
+}
+
+
+\newcommand{\important}[1]{{\color{Accent1}#1}}
+
+\newcommand{\inlinenote}[2][0.6]{%
+    \tikz{%
+        \pgfmathsetmacro{\scale}{#1}
+        \node (note) {\includegraphics[scale = \scale]{#2}};%
+        \pgfresetboundingbox
+        \path[use as bounding box] ($(note.south west) + ({\scale * 7.5mm}, \scale * 7.5mm)$) rectangle ($(note.north east) - (\scale * 3.5mm, \scale * 14.5mm)$);
+    }%
+}
+
 \usepackage{musixtex}
 
 \begin{document}
@@ -35,19 +52,12 @@
 
     If you have already run the Membrane Flute activity with the same group, the presentation is identical and can be skipped.
 
+    You should also run through the ``Sheet Music'' presentation, which discusses the basics of reading sheet music. Even if the ``Standing Waves'' presentation was skipped, this presentation should be given.
+
     This activity will require students to select the appropriate lengths of pipe for the piece of music they choose (or are given). This will involve reading music; while all necessary instructions are given, the instructor (you) should make sure they are familiar enough with the process to be able to help students who are struggling.
 \end{instructoronly}
 
 \section{Introduction}
-
-% Connect standing waves and sound
-% Understand frequency-pitch relationship
-% Work out what notes are needed
-% Work out what frequency each note is
-% Work out pipe lengths for each note
-%
-% Assemble
-% Play
  
 By this point, you should have seen the presentation on standing waves, in which we discussed how waves propagate and interact to form standing waves. Most of the concepts discussed were framed as an oscillating string, but the same principles apply to any wave, including ripples on a pond, light (electromagnetic waves), and sound waves. Sound waves differ from the other examples mentioned in that they are longitudinal waves, rather than transverse waves. This means that the oscillations are parallel to the direction of travel of the wave, rather than perpendicular to it. 
 
@@ -61,138 +71,126 @@ Since sound is also a wave, some conditions can set up standing waves in air. Th
 
 As part of this activity, you'll be reading sheet music, which looks a bit like this:
 
-\begin{music}
-    % \let\extractline\relax
-    \parindent10mm
-    \instrumentnumber{1} % a single instrument
-    \setstaffs1{1} % with two staffs
-    \generalmeter{\meterfrac44} % 4/4 meter chosen
-    \generalsignature{-2}
-    \startextract % starting real score
-    \Notes\ibu0d2\qb0{cde}\tbu0\qb0{f} \ibu{0}{g}{-3}\qb0{g}\tbu0\qb0{e}\qa{g} \en
-    \bar
-    \Notes\ibu0f{-3} \qb0{^f}\tbu0\qb0{d} \qa{f} \ibu0f{-3}\qb0{=f}\tbu0\qb0{_d} \qa{f} \en
-    \endextract % terminate excerpt
-\end{music}
+\input{snippets/compiled/sample.tex}
 
-You can think of this as a bit like a graph: the $y$-axis represents pitch, and the $x$ axis represents time. Then, the shape of the notes themselves tell you how long each note should be played, and any markings (like the $\sharp$ and $\flat$ symbols) indicate some modification to how the note would normally sound. 
+You should have seen the presentation about the basics of sheet music. A summary is given here for reference while you work.
 
-We'll break down the example above, but first a short primer on the notes in the 12-note scale\footnote{A 12-note scale is most common in western music, but is far from the only scale used. For example, Indian classical music uses a 22-note scale, which contains pitches which sit between the notes in the 12-note scale.}.
-We divide the range of all possible pitches into sections called octaves. These are defined such that one octave starts at exactly double the frequency of the previous octave. Because of this nice relationship between the frequencies, notes that are one octave apart sound good together, and also fulfil similar roles in music. This makes it quite logical to name the notes in each octave the same, and use a number to indicate the octave. For example, the note \notename{A}{} in the 4\th{} octave has frequency \SI{440}{\hertz}\footnote{The frequency of \notename{A}{4} is actually used to define the tuning; A-440 is the standard tuning for orchestras, but other tunings are used in other contexts.}, while the note \notename{A}{} in the 5\th{} octave has frequency \SI{880}{\hertz}. 
+\subsection{Frequency and Pitch}
 
-It's worth emphasising that frequency and perceived pitch don't have a linear relationship; we hear the jump between \SI{220}{\hertz} and \SI{440}{\hertz} as the same as the jump from \SI{880}{\hertz} to \SI{1760}{\hertz}. The difference between the two is not the same, but the ratio is.
+The full range of all possible frequencies is divided into \important{octaves}, in which the frequency at the start of one octave is exactly double that of the previous octave. Everything within one octave (note names, harmonies etc.) repeats identically in the next octave, at double the frequency.
 
-Within each octave, we define 12 notes. Exactly how these are defined is not actually very straight forward, but for the purposes of this activity we'll just assume we're using something called equal temperament. This means that the ratio between any two adjacent notes is always the same, and is the 12\th{} root of 2 ($\sqrt[12]{2}\approx 1.059463$). To go from the first note of an octave to the second, we multiply the frequency by $\sqrt[12]{2}$. This means to go from the first note of one octave to the first note of the next, we multiply the frequency by $\sqrt[12]{2}$ 12 times, which is the same as multiplying by $2$. We usually call the jump from one note to the next a half-step or a semitone. Jumping up two notes is called a whole-step or a tone.
+Within each octave, we label 7 of the 12 the notes A to G, with the remaining 5 denoted by \important{sharps} (\notename[^]{A}{}) and \important{flats} (\notename[_]{A}{}). Each note is $\sqrt[12]{2}$ times the frequency of the previous note. If we want to be explicit about which note we're talking about, we might then specify the octave number like so: \notename[^]{A}{4}. 
 
-When writing music, we don't usually use all 12 notes in a given octave. In western music, we usually use a subset of 7\footnote{This is why it is called an octave; with a 7-note scale, the 8\th{} note is the same as the first but an octave higher. ``Oct'' is a prefix from Greek that means 8.}. This is called a key. The simplest key is called C major (you can safely ignore the ``major'' for this activity), in which the 7 keys used are labeled with the letters A to G. The notes in between are then labelled with what are called accidentals: a sharp ($\sharp$) raises the pitch by a semitone, while a flat ($\flat$) lowers the pitch by a semitone. 
+These notes are written on a \important{staff} (a set of 5 horizontal lines), where the height indicates the note (sharps and flats don't change the height). The head of a note can fall exactly on a line, or in the gap between two lines. The \important{clef} tells us the range of notes which can be written on the staff; in this activity, we will always be using the treble clef, which looks like this: \resizebox{0.65\baselineskip}{!}{\input{snippets/compiled/treble.tex}}. This indicates that the lowest line of the staff is the note \notename{E}{4}. Notes are given below, labelled with their name and octave.
+
+\input{snippets/compiled/notes.tex}
+
+Sharps and flats are added like so: \raisebox{-0.35\height}{\input{snippets/compiled/notes_sharp.tex}}
+
+The \important{key signature} tells us which of the 7 ``natural'' notes (A-G) should always be played sharp or flat. For example, the key signature for the key of D major is \raisebox{-0.35\height}{\resizebox{!}{3\baselineskip}{\input{snippets/compiled/key_signature_D.tex}}}. It shows a sharp on the \notename{F}{4} and \notename{C}{5}, so every time we see an \notename{F}{} or \notename{C}{} in the music (any octave), we should play it sharp. The key signature for the key of F major is \raisebox{-0.35\height}{\resizebox{!}{3\baselineskip}{\input{snippets/compiled/key_signature_F.tex}}}. It shows a flat on the \notename{B}{4}, so every time we see a \notename{B}{} in the music (any octave), we should play it flat. A table of key signatures and the notes they modify is given below.
+
+\subsubsection{Key Signatures with Sharps}
+
+\begin{center}
+\begin{tabular}{l|c|l}
+    Key Signature & Name & Notes Modified \\\hline
+    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_C.tex}} & \notename[^]{C}{} Major & None \\
+    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_G.tex}} & \notename[^]{G}{} Major & \notename[^]{F}{} \\
+    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_D.tex}} & \notename[^]{D}{} Major & \notename[^]{F}{}, \notename[^]{C}{} \\
+    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_A.tex}} & \notename[^]{A}{} Major & \notename[^]{F}{}, \notename[^]{C}{}, \notename[^]{G}{} \\
+    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_E.tex}} & \notename[^]{E}{} Major & \notename[^]{F}{}, \notename[^]{C}{}, \notename[^]{G}{}, \notename[^]{D}{} \\
+    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_B.tex}} & \notename[^]{B}{} Major & \notename[^]{C}{}, \notename[^]{D}{}, \notename[^]{E}{}, \notename[^]{F}{}, \notename[^]{G}{}, \notename[^]{A}{} \\
+    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_F_sharp.tex}} & \notename[^]{F}{} Major & \notename[^]{F}{}, \notename[^]{G}{}, \notename[^]{A}{}, \notename[^]{C}{}, \notename[^]{D}{}, \notename[^]{E}{} \\
+    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_C_sharp.tex}} & \notename[^]{C}{} Major & \notename[^]{C}{}, \notename[^]{D}{}, \notename[^]{E}{}, \notename[^]{F}{}, \notename[^]{G}{}, \notename[^]{A}{}, \notename[^]{B}{} 
+\end{tabular}
+\end{center}
+
+\subsubsection{Key Signatures with Flats}
+
+\begin{center}
+\begin{tabular}{l|c|l}
+    Key Signature & Name & Notes Modified \\\hline
+    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_C.tex}} & \notename[_]{C}{} Major & None \\
+    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_F.tex}} & \notename[_]{F}{} Major & \notename[_]{B}{} \\
+    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_B_flat.tex}} & \notename[_]{B}{} Major & \notename[_]{B}{}, \notename[_]{E}{} \\
+    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_E_flat.tex}} & \notename[_]{E}{} Major & \notename[_]{B}{}, \notename[_]{E}{}, \notename[_]{A}{} \\
+    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_A_flat.tex}} & \notename[_]{A}{} Major & \notename[_]{B}{}, \notename[_]{E}{}, \notename[_]{A}{}, \notename[_]{D}{} \\
+    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_D_flat.tex}} & \notename[_]{D}{} Major & \notename[_]{B}{}, \notename[_]{E}{}, \notename[_]{A}{}, \notename[_]{D}{}, \notename[_]{G}{} \\
+    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_G_flat.tex}} & \notename[_]{G}{} Major & \notename[_]{B}{}, \notename[_]{E}{}, \notename[_]{A}{}, \notename[_]{D}{}, \notename[_]{G}{}, \notename[_]{C}{} \\
+    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_C_flat.tex}} & \notename[_]{C}{} Major & \notename[_]{B}{}, \notename[_]{E}{}, \notename[_]{A}{}, \notename[_]{D}{}, \notename[_]{G}{}, \notename[_]{C}{}, \notename[_]{F}{} 
+\end{tabular}
+\end{center}
+
+\subsection{Note Lengths}
+
+While the vertical position of a note tell us the pitch, the shape tells us the duration. We'll be using a crotchet (\inlinenote{snippets/compiled/crotchet.pdf}) as our base unit of time. A crotchet is also known as a quarter note, because in most music (especially pop music) there are four crotchets in a bar. Tap your foot to your favourite song, and you're probably tapping in time with the crotchets. Half a crotchet is called a quaver (\inlinenote{snippets/compiled/quaver.pdf}), which is written with a tail when it's on its own, but a beam when there are multiple played as a group (\inlinenote{snippets/compiled/quaver_beam.pdf}). The table below shows the names of the most common note lengths, and how many crotchets they are worth.
+
+\begin{center}
+    \renewcommand\arraystretch{2}
+\begin{tabular}{c|c|l|c}
+    Note & Name & Length & Rest Equivalent \\\hline
+    \inlinenote[0.8]{snippets/compiled/semibreve.pdf} & Semibreve & \inlinenote[0.8]{snippets/compiled/crotchet.pdf} + \inlinenote[0.8]{snippets/compiled/crotchet.pdf} + \inlinenote[0.8]{snippets/compiled/crotchet.pdf} + \inlinenote[0.8]{snippets/compiled/crotchet.pdf} = \inlinenote[0.8]{snippets/compiled/semibreve.pdf} & \inlinenote[0.8]{snippets/compiled/rest_semibreve.pdf} \\
+    \inlinenote[0.8]{snippets/compiled/minim.pdf} & Minim & \inlinenote[0.8]{snippets/compiled/crotchet.pdf} + \inlinenote[0.8]{snippets/compiled/crotchet.pdf} = \inlinenote[0.8]{snippets/compiled/minim.pdf} & \inlinenote[0.8]{snippets/compiled/rest_minim.pdf} \\
+    \inlinenote[0.8]{snippets/compiled/crotchet.pdf} & Crotchet &  & \inlinenote[0.8]{snippets/compiled/rest_crotchet.pdf} \\
+    \inlinenote[0.8]{snippets/compiled/quaver.pdf} & Quaver & \inlinenote[0.8]{snippets/compiled/crotchet.pdf} = \inlinenote[0.8]{snippets/compiled/quaver.pdf} + \inlinenote[0.8]{snippets/compiled/quaver.pdf} = \inlinenote[0.8]{snippets/compiled/quaver_beam.pdf} & \inlinenote[0.8]{snippets/compiled/rest_quaver.pdf} \\
+    \inlinenote[0.8]{snippets/compiled/semiquaver.pdf} & Semiquaver & \inlinenote[0.8]{snippets/compiled/crotchet.pdf} = \inlinenote[0.8]{snippets/compiled/semiquaver.pdf} + \inlinenote[0.8]{snippets/compiled/semiquaver.pdf} + \inlinenote[0.8]{snippets/compiled/semiquaver.pdf} + \inlinenote[0.8]{snippets/compiled/semiquaver.pdf} & \inlinenote[0.8]{snippets/compiled/rest_semiquaver.pdf} \\
+\end{tabular}
+\end{center}
 
 \clearpage
 
-The easiest way to show this is with a piano keyboard:
+\task{Building Your Instrument}
 
-\begin{center}
-\begin{tikzpicture}[
-    arrow outer/.style = {
-        line width = 1mm, 
-        white, 
-        {Circle[width = 1.5mm, length = 1.5mm]}-{Classical TikZ Rightarrow[
-            width = 3.75mm, 
-            length = 3.75mm
-        ]}
-    },
-    arrow inner/.style = {
-        line width = 0.5mm, 
-        Accent1, 
-        {Circle[width = 1mm, length = 1mm]}-{Classical TikZ Rightarrow[
-            width = 3.25mm, 
-            length = 3.25mm
-        ]},
-        shorten > = {0.25mm},
-        shorten < = {0.25mm}
-    },
-    label/.style = {
-        fill = white,
-        fill opacity = 0.8,
-        inner sep = 1pt
-    }
-]
-\pgfmathsetmacro{\whitewidth}{1}
-\pgfmathsetmacro{\blackwidth}{0.6}
-\pgfmathsetmacro{\whiteheight}{5}
-\pgfmathsetmacro{\blackheight}{2.75}
-\foreach \i in {0,...,7} {
-    \draw[fill=white] (\i*\whitewidth,0) rectangle (\i*\whitewidth+\whitewidth,\whiteheight);
-}
-\foreach \i in {0,1,3,4,5} {
-    \draw[fill=black] (\i*\whitewidth+\whitewidth-\blackwidth/2,\whiteheight) rectangle (\i*\whitewidth+\whitewidth+\blackwidth/2,\whiteheight-\blackheight);
-}
-\foreach \i/\n in {0/C,1/D,2/E,3/F,4/G,5/A,6/B,7/C} {
-    \node[above, ForegroundColour] at (\i*\whitewidth+\whitewidth/2,0) {\n};
-}
-\foreach \i/\n/\o in {%
-    0/{$\text{C}^\sharp$}/{$\text{D}^\flat$},%
-    1/{$\text{D}^\sharp$}/{$\text{E}^\flat$},%
-    3/{$\text{F}^\sharp$}/{$\text{G}^\flat$},%
-    4/{$\text{G}^\sharp$}/{$\text{A}^\flat$},%
-    5/{$\text{A}^\sharp$}/{$\text{B}^\flat$}%
-}{
-    \node[below, BackgroundColour] (n) at ({(\i+1)*\whitewidth},\whiteheight) {\n};
-    \node[below, BackgroundColour] (o) at (n.south) {\o};
-}
-\coordinate (start) at ({\whitewidth / 2}, {\whiteheight - \blackheight - 0.75  });
-\coordinate (end)   at ({\whitewidth - 0.1}    , {\whiteheight - \blackheight + 0.3});
-\draw[arrow outer] (start) -- (end) node[midway, left = 1mm, label, text = Accent1] {Semitone};
-\draw[arrow inner] (start) -- (end);
+\begin{instructoronly}
+    Divide the students into up to 4 groups (though you don't need to move them yet). Give each group a different piece of music from the pack. While they work on the task, set out the available pipe lengths, and give a board to each group. 
 
-\coordinate (start) at ({\whitewidth + 0.1}, {\whiteheight - \blackheight + 0.3});
-\coordinate (end)   at ({\whitewidth * 1.5}, {\whiteheight - \blackheight - 0.75}); 
-\draw[arrow outer] (start) -- (end) node[midway, right = 1mm, label, text = Accent1] {Semitone};
-\draw[arrow inner] (start) -- (end);
+    It's recommended the groups have about half an hour to practice, but this can happily be extended to fill time. Leave about 10 minutes at the end for each group to perform their piece to the rest of the class.
+\end{instructoronly}
 
-\coordinate (start) at ({\whitewidth / 2}, {\whiteheight - \blackheight - 1});
-\coordinate (end)   at ({\whitewidth * 1.5}, {\whiteheight - \blackheight - 1});
-\draw[arrow outer] (start) -- (end) node[midway, below = 1mm, align = center, label, text = Accent2] {Whole Tone};
-\draw[arrow inner, Accent2] (start) -- (end);
+Complete the tasks in your worksheet. You will need to refer to the table below, which lists the frequencies of various notes.
 
-\coordinate (start) at ({\whitewidth * 6.5}, {\whiteheight - \blackheight - 1});
-\coordinate (end) at ({\whitewidth * 7.5}, {\whiteheight - \blackheight - 1});
-\draw[arrow outer] (start) -- (end) node[midway, below = 1mm, align = center, label, text = Accent1] {Semitone};
-\draw[arrow inner] (start) -- (end);
-\end{tikzpicture}
-\end{center}
+\begin{multicols}{2}
+    \begin{center}
+        \renewcommand\arraystretch{2}
+        \begin{tabular}{r|l}
+            \quad\quad Note & Frequency (\si{\hertz}) \\\hline
+            \notename{C}{4} & $261.63$ \\
+            \notename[^]{C}{4}, \notename[_]{D}{4} & $277.18$ \\
+            \notename{D}{4} & $293.66$ \\
+            \notename[^]{D}{4}, \notename[_]{E}{4} & $311.13$ \\
+            \notename{E}{4} & $329.63$ \\
+            \notename{F}{4} & $349.23$ \\
+            \notename[^]{F}{4}, \notename[_]{G}{4} & $369.99$ \\
+            \notename{G}{4} & $392.00$ \\
+            \notename[^]{G}{4}, \notename[_]{A}{4} & $415.30$ \\
+            \notename{A}{4} & $440.00$ \\
+            \notename[^]{A}{4}, \notename[_]{B}{4} & $466.16$ \\
+            \notename{B}{4} & $493.88$ 
+        \end{tabular}
+    \end{center}
+    \begin{center}
+        \renewcommand\arraystretch{2}
+        \begin{tabular}{r|l}
+            \quad\quad Note & Frequency (\si{\hertz}) \\\hline
+            \notename{C}{5} & $523.25$ \\
+            \notename[^]{C}{5}, \notename[_]{D}{5} & $554.37$ \\
+            \notename{D}{5} & $587.33$ \\
+            \notename[^]{D}{5}, \notename[_]{E}{5} & $622.25$ \\
+            \notename{E}{5} & $659.25$ \\
+            \notename{F}{5} & $698.46$ \\
+            \notename[^]{F}{5}, \notename[_]{G}{5} & $739.99$ \\
+            \notename{G}{5} & $783.99$ \\
+            \notename[^]{G}{5}, \notename[_]{A}{5} & $830.61$ \\
+            \notename{A}{5} & $880.00$ \\
+            \notename[^]{A}{5}, \notename[_]{B}{5} & $932.33$ \\
+            \notename{B}{5} & $987.77$ \\
+            \notename{C}{6} & $1046.50$ 
+        \end{tabular}
+    \end{center}
+\end{multicols}
 
-The 7 notes used in C major are given white keys, while the 5 other notes sit between those as black keys\footnote{Until relatively recently, this was inverted; harpsichords and other keyboard instruments used to have a large row of black keys and a small upper row of white keys}. 
+\task{Perform}
 
-We can now look at some actual sheet music. The following is a C major scale; the notes in the key of C in ascending then descending order.
-
-\begin{music}
-    % \let\extractline\relax
-    \parindent10mm
-    \instrumentnumber{1} % a single instrument
-    \setstaffs1{1} % with two staffs
-    % \generalmeter{\meterfrac44} % 4/4 meter chosen
-    % \generalsignature{-2}
-    \startextract % starting real score
-    \Notes\qa{cdefghijihgfedc}\en
-    \endextract % terminate excerpt
-\end{music}
-
-% There are 7 white keys, and 5 black keys\footnote{For several centuries, on harpsichords and other keyboard instruments this was inverted, a lower row of black keys and upper row of white.}. The white keys are the notes C, D, E, F, G, A, and B. These are periodic; the next note after B is C again. The black keys are sharps ($\sharp$) and flats ($\flat$), and sit between the other (natural) notes. They have two names, depending on the context; for example, the first black key is between C and D, so it can be called \notename[^]{C}{} or \notename[_]{D}{}. Usually, it'll be \notename[^]{C}{} if it is taking the place of a \notename{C}, and \notename[_]{D}{} if it is replacing a \notename{D}, but it's still the same note.
-
-% Going from one note to the next is known as a half-step or a semitone; we can say that \notename[^]{F}{} is one semitone higher than \notename{F}{}. The distance between \notename{F}{} and \notename{G}{} is a whole step, or a tone. Notice that there is no black note between \notename{E}{} and \notename{F}{} or between \notename{B}{} and \notename{C}{}; these are only separated by a semitone. We have 12 notes in total, each one semitone higher than the last, but because of how they sound to us, we have only labelled 7 of them.
-
-% Adding a sharp ($\sharp$) to a note means ``go up one semitone'', while a flat ($\flat$) means ``go down one semitone'': \notename[^]{C}{} is one semitone higher than \notename{C}{}. This also means that \notename[^]{E}{} is equivalent to \notename{F}{}, since one semitone above \notename{E}{} is \notename{F}{}.
-
-% Looking back at our sample of music, the first thing on the left is a treble clef: 
-% \begin{music}
-% \let\extractline\relax
-% \instrumentnumber{1} 
-% \setstaffs1{1} 
-% \setlines10\smallmusicsize \nobarnumbers \nostartrule
-% \staffbotmarg0pt %\setclefsymbol1\empty
-% % \generalmeter{\meterfrac44}
-% \startextract\addspace{-\afterruleskip}\zendextract
-% \end{music}. This will be the same on all of the music you'll see here; it just tells you the range of the notes on the staff. We can ignore it for now. Next, we see two flat symbols. This is the key signature; it tells you which of the 12 notes we'll (mostly) be using. 
-
+Once you've practiced your piece, be ready to perform it to the rest of the class. 
 
 \end{document}
