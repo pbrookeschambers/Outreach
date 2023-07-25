@@ -620,6 +620,9 @@ def main():
             ntimes=tc["ntimes"],
         )
         # move the output file to the destination
+        # If we're on windows and the destination file already exists, we need to manually delete it first
+        if tc["dest"].exists():
+            os.remove(tc["dest"])
         os.rename(directory / f"{jobname}.pdf", tc["dest"])
         # clean text-generated auxiliary files
         clean(directory, jobname, verbose, tex_only=True)

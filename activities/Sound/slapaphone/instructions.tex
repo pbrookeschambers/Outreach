@@ -1,6 +1,6 @@
 \documentclass{article}
 
-\usepackage{../../../Template/packages/NUInstructions}
+\usepackage{../../../Template/packages/NUWorksheet}
 \usepackage{siunitx}
 \usepackage{multicol}
 
@@ -58,88 +58,12 @@
 \end{instructoronly}
 
 \section{Introduction}
- 
-By this point, you should have seen the presentation on standing waves, in which we discussed how waves propagate and interact to form standing waves. Most of the concepts discussed were framed as an oscillating string, but the same principles apply to any wave, including ripples on a pond, light (electromagnetic waves), and sound waves. Sound waves differ from the other examples mentioned in that they are longitudinal waves, rather than transverse waves. This means that the oscillations are parallel to the direction of travel of the wave, rather than perpendicular to it. 
+
+By this point, you should have seen the presentation on standing waves, in which we discussed how waves propagate and interact to form standing waves. Most of the concepts discussed were framed as an oscillating string, but the same principles apply to any wave, including ripples on a pond, light (electromagnetic waves), and sound waves. Sound waves differ from the other examples mentioned in that they are longitudinal waves, rather than transverse waves. This means that the oscillations are parallel to the direction of travel of the wave, rather than perpendicular to it. However, all of the same principles still apply to sound.
 
 Since sound is also a wave, some conditions can set up standing waves in air. The clearest example of this is wind instruments: in general, a wind instrument in its simplest form is a pipe, open at one end. A standing wave can be set up within that pipe, and just like before the allowed frequency is determined by the length of the pipe. We hear different frequencies as different pitches, so the length of the pipe determines the pitch of the note played. There's then three ways in which wind instruments change the note played. The simplest is by having multiple pipes of different length, like a church organ. Alternatively, they might physically change the length of the pipe, like a trombone. Finally, they might cover and uncover holes in the pipe, like a clarinet or recorder. This forces the standing wave to have a node at the hole, changing which frequencies are allowed.
 
-\ifinstructor
-\clearpage
-\fi
-
-\section{Sheet Music}
-
-As part of this activity, you'll be reading sheet music, which looks a bit like this:
-
-\input{snippets/compiled/sample.tex}
-
-You should have seen the presentation about the basics of sheet music. A summary is given here for reference while you work.
-
-\subsection{Frequency and Pitch}
-
-The full range of all possible frequencies is divided into \important{octaves}, in which the frequency at the start of one octave is exactly double that of the previous octave. Everything within one octave (note names, harmonies etc.) repeats identically in the next octave, at double the frequency.
-
-Within each octave, we label 7 of the 12 the notes A to G, with the remaining 5 denoted by \important{sharps} (\notename[^]{A}{}) and \important{flats} (\notename[_]{A}{}). Each note is $\sqrt[12]{2}$ times the frequency of the previous note. If we want to be explicit about which note we're talking about, we might then specify the octave number like so: \notename[^]{A}{4}. 
-
-These notes are written on a \important{staff} (a set of 5 horizontal lines), where the height indicates the note (sharps and flats don't change the height). The head of a note can fall exactly on a line, or in the gap between two lines. The \important{clef} tells us the range of notes which can be written on the staff; in this activity, we will always be using the treble clef, which looks like this: \resizebox{0.65\baselineskip}{!}{\input{snippets/compiled/treble.tex}}. This indicates that the lowest line of the staff is the note \notename{E}{4}. Notes are given below, labelled with their name and octave.
-
-\input{snippets/compiled/notes.tex}
-
-Sharps and flats are added like so: \raisebox{-0.35\height}{\input{snippets/compiled/notes_sharp.tex}}
-
-The \important{key signature} tells us which of the 7 ``natural'' notes (A-G) should always be played sharp or flat. For example, the key signature for the key of D major is \raisebox{-0.35\height}{\resizebox{!}{3\baselineskip}{\input{snippets/compiled/key_signature_D.tex}}}. It shows a sharp on the \notename{F}{4} and \notename{C}{5}, so every time we see an \notename{F}{} or \notename{C}{} in the music (any octave), we should play it sharp. The key signature for the key of F major is \raisebox{-0.35\height}{\resizebox{!}{3\baselineskip}{\input{snippets/compiled/key_signature_F.tex}}}. It shows a flat on the \notename{B}{4}, so every time we see a \notename{B}{} in the music (any octave), we should play it flat. A table of key signatures and the notes they modify is given below.
-
-\subsubsection{Key Signatures with Sharps}
-
-\begin{center}
-\begin{tabular}{l|c|l}
-    Key Signature & Name & Notes Modified \\\hline
-    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_C.tex}} & \notename[^]{C}{} Major & None \\
-    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_G.tex}} & \notename[^]{G}{} Major & \notename[^]{F}{} \\
-    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_D.tex}} & \notename[^]{D}{} Major & \notename[^]{F}{}, \notename[^]{C}{} \\
-    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_A.tex}} & \notename[^]{A}{} Major & \notename[^]{F}{}, \notename[^]{C}{}, \notename[^]{G}{} \\
-    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_E.tex}} & \notename[^]{E}{} Major & \notename[^]{F}{}, \notename[^]{C}{}, \notename[^]{G}{}, \notename[^]{D}{} \\
-    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_B.tex}} & \notename[^]{B}{} Major & \notename[^]{C}{}, \notename[^]{D}{}, \notename[^]{E}{}, \notename[^]{F}{}, \notename[^]{G}{}, \notename[^]{A}{} \\
-    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_F_sharp.tex}} & \notename[^]{F}{} Major & \notename[^]{F}{}, \notename[^]{G}{}, \notename[^]{A}{}, \notename[^]{C}{}, \notename[^]{D}{}, \notename[^]{E}{} \\
-    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_C_sharp.tex}} & \notename[^]{C}{} Major & \notename[^]{C}{}, \notename[^]{D}{}, \notename[^]{E}{}, \notename[^]{F}{}, \notename[^]{G}{}, \notename[^]{A}{}, \notename[^]{B}{} 
-\end{tabular}
-\end{center}
-
-\subsubsection{Key Signatures with Flats}
-
-\begin{center}
-\begin{tabular}{l|c|l}
-    Key Signature & Name & Notes Modified \\\hline
-    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_C.tex}} & \notename[_]{C}{} Major & None \\
-    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_F.tex}} & \notename[_]{F}{} Major & \notename[_]{B}{} \\
-    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_B_flat.tex}} & \notename[_]{B}{} Major & \notename[_]{B}{}, \notename[_]{E}{} \\
-    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_E_flat.tex}} & \notename[_]{E}{} Major & \notename[_]{B}{}, \notename[_]{E}{}, \notename[_]{A}{} \\
-    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_A_flat.tex}} & \notename[_]{A}{} Major & \notename[_]{B}{}, \notename[_]{E}{}, \notename[_]{A}{}, \notename[_]{D}{} \\
-    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_D_flat.tex}} & \notename[_]{D}{} Major & \notename[_]{B}{}, \notename[_]{E}{}, \notename[_]{A}{}, \notename[_]{D}{}, \notename[_]{G}{} \\
-    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_G_flat.tex}} & \notename[_]{G}{} Major & \notename[_]{B}{}, \notename[_]{E}{}, \notename[_]{A}{}, \notename[_]{D}{}, \notename[_]{G}{}, \notename[_]{C}{} \\
-    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_C_flat.tex}} & \notename[_]{C}{} Major & \notename[_]{B}{}, \notename[_]{E}{}, \notename[_]{A}{}, \notename[_]{D}{}, \notename[_]{G}{}, \notename[_]{C}{}, \notename[_]{F}{} 
-\end{tabular}
-\end{center}
-
-\subsection{Note Lengths}
-
-While the vertical position of a note tell us the pitch, the shape tells us the duration. We'll be using a crotchet (\inlinenote{snippets/compiled/crotchet.pdf}) as our base unit of time. A crotchet is also known as a quarter note, because in most music (especially pop music) there are four crotchets in a bar. Tap your foot to your favourite song, and you're probably tapping in time with the crotchets. Half a crotchet is called a quaver (\inlinenote{snippets/compiled/quaver.pdf}), which is written with a tail when it's on its own, but a beam when there are multiple played as a group (\inlinenote{snippets/compiled/quaver_beam.pdf}). The table below shows the names of the most common note lengths, and how many crotchets they are worth.
-
-\begin{center}
-    \renewcommand\arraystretch{2}
-\begin{tabular}{c|c|l|c}
-    Note & Name & Length & Rest Equivalent \\\hline
-    \inlinenote[0.8]{snippets/compiled/semibreve.pdf} & Semibreve & \inlinenote[0.8]{snippets/compiled/crotchet.pdf} + \inlinenote[0.8]{snippets/compiled/crotchet.pdf} + \inlinenote[0.8]{snippets/compiled/crotchet.pdf} + \inlinenote[0.8]{snippets/compiled/crotchet.pdf} = \inlinenote[0.8]{snippets/compiled/semibreve.pdf} & \inlinenote[0.8]{snippets/compiled/rest_semibreve.pdf} \\
-    \inlinenote[0.8]{snippets/compiled/minim.pdf} & Minim & \inlinenote[0.8]{snippets/compiled/crotchet.pdf} + \inlinenote[0.8]{snippets/compiled/crotchet.pdf} = \inlinenote[0.8]{snippets/compiled/minim.pdf} & \inlinenote[0.8]{snippets/compiled/rest_minim.pdf} \\
-    \inlinenote[0.8]{snippets/compiled/crotchet.pdf} & Crotchet &  & \inlinenote[0.8]{snippets/compiled/rest_crotchet.pdf} \\
-    \inlinenote[0.8]{snippets/compiled/quaver.pdf} & Quaver & \inlinenote[0.8]{snippets/compiled/crotchet.pdf} = \inlinenote[0.8]{snippets/compiled/quaver.pdf} + \inlinenote[0.8]{snippets/compiled/quaver.pdf} = \inlinenote[0.8]{snippets/compiled/quaver_beam.pdf} & \inlinenote[0.8]{snippets/compiled/rest_quaver.pdf} \\
-    \inlinenote[0.8]{snippets/compiled/semiquaver.pdf} & Semiquaver & \inlinenote[0.8]{snippets/compiled/crotchet.pdf} = \inlinenote[0.8]{snippets/compiled/semiquaver.pdf} + \inlinenote[0.8]{snippets/compiled/semiquaver.pdf} + \inlinenote[0.8]{snippets/compiled/semiquaver.pdf} + \inlinenote[0.8]{snippets/compiled/semiquaver.pdf} & \inlinenote[0.8]{snippets/compiled/rest_semiquaver.pdf} \\
-\end{tabular}
-\end{center}
-
-\clearpage
-
-\task{Building Your Instrument}
+\task{Reading your Music}
 
 \begin{instructoronly}
     Divide the students into up to 4 groups (though you don't need to move them yet). Give each group a different piece of music from the pack. While they work on the task, set out the available pipe lengths, and give a board to each group. 
@@ -147,7 +71,47 @@ While the vertical position of a note tell us the pitch, the shape tells us the 
     It's recommended the groups have about half an hour to practice, but this can happily be extended to fill time. Leave about 10 minutes at the end for each group to perform their piece to the rest of the class.
 \end{instructoronly}
 
-Complete the tasks in your worksheet. You will need to refer to the table below, which lists the frequencies of various notes.
+\textit{While working on these tasks, you'll be asked to read music. While you should have seen the ``Sheet Music'' presentation, there is also a summary of the key points at the end of these instructions. Refer to it as and when you need to, and don't be afraid to ask for help or clarifications.}
+
+\subtask{}
+
+Look at the sheet music you've been provided. Write the note names above each note. For example:
+
+\input{snippets/compiled/part_of_your_world.tex}
+
+\vspace{-1cm}
+Make sure you pay close attention to the key signature, and include all sharps and flats in your labels.
+
+\subtask{}
+
+Fill in the table below with all the unique notes in your music (where \notename{E}{4} is not the same as \notename{E}{5}). For the ``Frequency'' column, use the tables on the next page to find the frequency of each note. Then, use equation (\ref{eq:length}) to calculate the length of pipe needed to make that note, where $l$ is the length of the pipe, $r$ the radius, and $f$ the frequency of the note. You may use $v = \SI{343}{\meter\per\second}$ as the speed of sound, and $d = \SI{32}{\milli\meter}$ as the \textbf{diameter} of the pipe.
+
+\begin{equation}
+    l = r + \frac{v}{2f} \label{eq:length}
+\end{equation}
+
+\begin{multicols}{2}
+    \answertable{
+        rows = 7,
+        columns = 3,
+        headers = {Note, Frequency (\si{\hertz}), Length (\answerinline{mm})},
+    }
+    \answertable{
+        rows = 7,
+        columns = 3,
+        headers = {Note, Frequency (\si{\hertz}), Length (\answerinline{mm})},
+    }
+\end{multicols}
+
+\task{Building your Instrument}
+
+Join up with the rest of your group and compare your answers. Once you're all agreed, select which pipes you will need to cover all the notes you identified (they are each labelled with their length in \si{\milli\meter}).
+
+Clip the pipes to your board in order. Play them by gently hitting the end of the pipe with your palm so that it forms a seal around the opening. You'll need to hit firmly, but not hard enough to move the pipes in the clips. Practice the piece you've been given in your groups; you may want to each be responsible for a few notes (e.g., \notename{C}{4} to \notename[^]{G}{4}), or for a section of the piece (e.g., bars 1-4, 5-8, etc.). Practice slowly, and gradually increase the speed until you can play the piece at the correct tempo. 
+
+\clearpage
+
+\subsection{Note Frequencies}
 
 \begin{multicols}{2}
     \begin{center}
@@ -189,8 +153,81 @@ Complete the tasks in your worksheet. You will need to refer to the table below,
     \end{center}
 \end{multicols}
 
-\task{Perform}
 
-Once you've practiced your piece, be ready to perform it to the rest of the class. 
+\clearpage
+
+\section{Sheet Music}
+
+\textit{Before this activity, you should have seen the presentation about the basics of sheet music. This section is here for reference while you work; get started on the task and come back here as you need to.}
+
+As part of this activity, you'll be reading sheet music, which looks a bit like this:
+
+\input{snippets/compiled/sample.tex}
+
+This section will give you a short summary of what this means and how to read it. 
+
+\subsection{Frequency and Pitch}
+
+The full range of all possible frequencies is divided into \important{octaves}, in which the frequency at the start of one octave is exactly double that of the previous octave. Everything within one octave (note names, harmonies etc.) repeats identically in the next octave, at double the frequency.
+
+Within each octave, we label 7 of the 12 the notes A to G, with the remaining 5 denoted by \important{sharps} (\notename[^]{A}{}) and \important{flats} (\notename[_]{A}{}). Each note is $\sqrt[12]{2}$ times the frequency of the previous note. If we want to be explicit about which note we're talking about, we might then specify the octave number like so: \notename[^]{A}{4}. 
+
+These notes are written on a \important{staff} (a set of 5 horizontal lines), where the height indicates the note (sharps and flats don't change the height). The head of a note can fall exactly on a line, or in the gap between two lines. The \important{clef} tells us the range of notes which can be written on the staff; in this activity, we will always be using the treble clef, which looks like this: \resizebox{0.65\baselineskip}{!}{\input{snippets/compiled/treble.tex}}. This indicates that the lowest line of the staff is the note \notename{E}{4}. Notes are given below, labelled with their name and octave.
+
+\input{snippets/compiled/notes.tex}
+
+Sharps and flats are added like so: \raisebox{-0.35\height}{\input{snippets/compiled/notes_sharp.tex}}
+
+The \important{key signature} tells us which of the 7 ``natural'' notes (A-G) should always be played sharp or flat. For example, the key signature for the key of D major is \raisebox{-0.35\height}{\resizebox{!}{3\baselineskip}{\input{snippets/compiled/key_signature_D.tex}}}. It shows a sharp on the \notename{F}{5} and \notename{C}{5}, so every time we see an \notename{F}{} or \notename{C}{} in the music (any octave), we should play it sharp. The key signature for the key of F major is \raisebox{-0.35\height}{\resizebox{!}{3\baselineskip}{\input{snippets/compiled/key_signature_F.tex}}}. It shows a flat on the \notename{B}{5}, so every time we see a \notename{B}{} in the music (any octave), we should play it flat. A table of key signatures and the notes they modify is given below.
+
+\subsubsection{Key Signatures with Sharps}
+
+\begin{center}
+\begin{tabular}{l|c|l}
+    Key Signature & Name & Notes Modified \\\hline
+    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_C.tex}} & \notename[]{C}{} Major & None \\
+    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_G.tex}} & \notename[]{G}{} Major & \notename[^]{F}{} \\
+    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_D.tex}} & \notename[]{D}{} Major & \notename[^]{F}{}, \notename[^]{C}{} \\
+    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_A.tex}} & \notename[]{A}{} Major & \notename[^]{F}{}, \notename[^]{C}{}, \notename[^]{G}{} \\
+    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_E.tex}} & \notename[]{E}{} Major & \notename[^]{F}{}, \notename[^]{C}{}, \notename[^]{G}{}, \notename[^]{D}{} \\
+    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_B.tex}} & \notename[]{B}{} Major & \notename[^]{C}{}, \notename[^]{D}{}, \notename[^]{E}{}, \notename[^]{F}{}, \notename[^]{G}{}, \notename[^]{A}{} \\
+    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_F_sharp.tex}} & \notename[^]{F}{} Major & \notename[^]{F}{}, \notename[^]{G}{}, \notename[^]{A}{}, \notename[^]{C}{}, \notename[^]{D}{}, \notename[^]{E}{} \\
+    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_C_sharp.tex}} & \notename[^]{C}{} Major & \notename[^]{C}{}, \notename[^]{D}{}, \notename[^]{E}{}, \notename[^]{F}{}, \notename[^]{G}{}, \notename[^]{A}{}, \notename[^]{B}{} 
+\end{tabular}
+\end{center}
+
+\clearpage
+
+\subsubsection{Key Signatures with Flats}
+
+\begin{center}
+\begin{tabular}{l|c|l}
+    Key Signature & Name & Notes Modified \\\hline
+    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_C.tex}} & \notename[]{C}{} Major & None \\
+    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_F.tex}} & \notename[]{F}{} Major & \notename[_]{B}{} \\
+    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_B_flat.tex}} & \notename[_]{B}{} Major & \notename[_]{B}{}, \notename[_]{E}{} \\
+    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_E_flat.tex}} & \notename[_]{E}{} Major & \notename[_]{B}{}, \notename[_]{E}{}, \notename[_]{A}{} \\
+    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_A_flat.tex}} & \notename[_]{A}{} Major & \notename[_]{B}{}, \notename[_]{E}{}, \notename[_]{A}{}, \notename[_]{D}{} \\
+    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_D_flat.tex}} & \notename[_]{D}{} Major & \notename[_]{B}{}, \notename[_]{E}{}, \notename[_]{A}{}, \notename[_]{D}{}, \notename[_]{G}{} \\
+    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_G_flat.tex}} & \notename[_]{G}{} Major & \notename[_]{B}{}, \notename[_]{E}{}, \notename[_]{A}{}, \notename[_]{D}{}, \notename[_]{G}{}, \notename[_]{C}{} \\
+    \raisebox{-0.35\height}{\input{snippets/compiled/key_signature_C_flat.tex}} & \notename[_]{C}{} Major & \notename[_]{B}{}, \notename[_]{E}{}, \notename[_]{A}{}, \notename[_]{D}{}, \notename[_]{G}{}, \notename[_]{C}{}, \notename[_]{F}{} 
+\end{tabular}
+\end{center}
+
+\subsection{Note Lengths}
+
+While the vertical position of a note tell us the pitch, the shape tells us the duration. We'll be using a crotchet (\inlinenote{snippets/compiled/crotchet.pdf}) as our base unit of time. A crotchet is also known as a quarter note, because in most music (especially pop music) there are four crotchets in a bar. Tap your foot to your favourite song, and you're probably tapping in time with the crotchets. Half a crotchet is called a quaver (\inlinenote{snippets/compiled/quaver.pdf}), which is written with a tail when it's on its own, but a beam when there are multiple played as a group (\inlinenote{snippets/compiled/quaver_beam.pdf}). The table below shows the names of the most common note lengths, and how many crotchets they are worth.
+
+\begin{center}
+    \renewcommand\arraystretch{2}
+\begin{tabular}{c|c|l|c}
+    Note & Name & Length & Rest Equivalent \\\hline
+    \inlinenote[0.8]{snippets/compiled/semibreve.pdf} & Semibreve & \inlinenote[0.8]{snippets/compiled/crotchet.pdf} + \inlinenote[0.8]{snippets/compiled/crotchet.pdf} + \inlinenote[0.8]{snippets/compiled/crotchet.pdf} + \inlinenote[0.8]{snippets/compiled/crotchet.pdf} = \inlinenote[0.8]{snippets/compiled/semibreve.pdf} & \inlinenote[0.8]{snippets/compiled/rest_semibreve.pdf} \\
+    \inlinenote[0.8]{snippets/compiled/minim.pdf} & Minim & \inlinenote[0.8]{snippets/compiled/crotchet.pdf} + \inlinenote[0.8]{snippets/compiled/crotchet.pdf} = \inlinenote[0.8]{snippets/compiled/minim.pdf} & \inlinenote[0.8]{snippets/compiled/rest_minim.pdf} \\
+    \inlinenote[0.8]{snippets/compiled/crotchet.pdf} & Crotchet &  & \inlinenote[0.8]{snippets/compiled/rest_crotchet.pdf} \\
+    \inlinenote[0.8]{snippets/compiled/quaver.pdf} & Quaver & \inlinenote[0.8]{snippets/compiled/crotchet.pdf} = \inlinenote[0.8]{snippets/compiled/quaver.pdf} + \inlinenote[0.8]{snippets/compiled/quaver.pdf} = \inlinenote[0.8]{snippets/compiled/quaver_beam.pdf} & \inlinenote[0.8]{snippets/compiled/rest_quaver.pdf} \\
+    \inlinenote[0.8]{snippets/compiled/semiquaver.pdf} & Semiquaver & \inlinenote[0.8]{snippets/compiled/crotchet.pdf} = \inlinenote[0.8]{snippets/compiled/semiquaver.pdf} + \inlinenote[0.8]{snippets/compiled/semiquaver.pdf} + \inlinenote[0.8]{snippets/compiled/semiquaver.pdf} + \inlinenote[0.8]{snippets/compiled/semiquaver.pdf} & \inlinenote[0.8]{snippets/compiled/rest_semiquaver.pdf} \\
+\end{tabular}
+\end{center}
 
 \end{document}

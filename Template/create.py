@@ -2,6 +2,7 @@
 
 from pathlib import Path
 import sys
+import os
 from types import SimpleNamespace
 from rich import print as rprint
 from rich.prompt import Confirm
@@ -59,6 +60,7 @@ def parse_args():
     directory = Path(directory)
     return directory
 
+
 def main():
     directory = parse_args()
     if directory.exists():
@@ -71,13 +73,16 @@ def main():
                 sys.exit(0)
     else:
         directory.mkdir(parents=True)
+
+    #directory = directory.absolute()
     
     for template_name, template in templates.items():
         rprint(f"Creating {directory / f'{template_name}.tex'}")
         template_path = directory / f"{template_name}.tex"
         # package_dir relative to the template file
         package_dir = Path(__file__).parent / "packages"
-        package_dir = package_dir.relative_to(directory)
+        package_dir = os.path.relpath(package_dir, directory)
+        package_dir = str(package_dir).replace("\\", "/") # if we're on Windows, we need to sort out the path separator
         text = template.format(package_dir=package_dir, title=template_name)
         with open(template_path, "w+") as f:
             f.write(text)
